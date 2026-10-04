@@ -13,7 +13,9 @@ python3 -m http.server 8770
 
 Then open http://localhost:8770/
 
-- `index.html` – main site (clay-miniature islands, scroll story)
+- `index.html` – main site (Ghibli-style landscape, scroll story)
+- `ghibli.html` – same as index
+- `clay.html` – alternative design: clay miniatures at dusk
 - `hotline.html` – alternative design: feature-phone LCD
 - `tour.html` – first version: click-through island tour
 
