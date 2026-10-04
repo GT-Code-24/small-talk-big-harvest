@@ -1,0 +1,1693 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Small Talk, Big Harvest</title>
+<meta name="description" content="An AI hotline that helps farmers diagnose a sick plant: from any phone, by voice in Hindi, without a data bundle.">
+<meta name="theme-color" content="#0E0F0A">
+<meta property="og:title" content="Small Talk, Big Harvest">
+<meta property="og:description" content="An AI hotline for farmers. Any phone. Hindi voice. No data bundle.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' rx='3' fill='%230E0F0A'/%3E%3Crect x='5' y='2' width='6' height='12' fill='%23C6F432'/%3E%3Crect x='6' y='3' width='4' height='4' fill='%230E0F0A'/%3E%3Crect x='6' y='9' width='1' height='1' fill='%230E0F0A'/%3E%3Crect x='9' y='9' width='1' height='1' fill='%230E0F0A'/%3E%3Crect x='6' y='11' width='1' height='1' fill='%230E0F0A'/%3E%3Crect x='9' y='11' width='1' height='1' fill='%230E0F0A'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
+<link rel="stylesheet" href="vendor/lenis/lenis.css">
+<style>
+:root{
+  --night:#0E0F0A; --night-2:#14160E; --line:#272B1D; --lime:#C6F432; --lime-dim:#8BA824; --olive:#4B5A1A;
+  --cherry:#E0363F; --paper:#ECEADF; --fog:#8E917C;
+  --disp:'Big Shoulders Display',Impact,'Arial Narrow',sans-serif;
+  --pix:'Silkscreen',ui-monospace,monospace;
+  --term:'VT323',ui-monospace,monospace;
+  --rail:clamp(64px,7vw,112px);
+}
+*{box-sizing:border-box}
+html{background:var(--night);color-scheme:dark}
+body{margin:0;background:var(--night);color:var(--paper);font:400 24px/1.12 var(--term);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--lime);color:var(--night)}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--lime);outline-offset:4px}
+@media (pointer:fine){html.cur,html.cur *{cursor:none!important}}
+
+#scene{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0}
+#shade{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(14,15,10,.92) 0%,rgba(14,15,10,.72) 34%,rgba(14,15,10,.12) 62%,rgba(14,15,10,0) 75%)}
+#crt{position:fixed;inset:0;z-index:50;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.26) 2px 3px);opacity:.42;mix-blend-mode:multiply}
+#grain{position:fixed;inset:-50%;z-index:51;pointer-events:none;opacity:.07;animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-4%)}60%{transform:translate(-4%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+#vig{position:fixed;inset:0;z-index:49;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.55) 100%)}
+#tags{position:fixed;inset:0;z-index:2;pointer-events:none}
+.gtag{position:absolute;left:0;top:0;font:400 10px/1.25 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--lime);background:rgba(14,15,10,.82);border-left:2px solid var(--lime);padding:5px 8px 5px 8px;white-space:nowrap;opacity:0;transition:opacity .35s;will-change:transform}
+.gtag small{display:block;color:var(--fog);font-size:9px}
+.gtag.red{color:var(--cherry);border-color:var(--cherry)}
+
+/* status bar */
+#bar{position:fixed;top:0;left:0;right:0;height:46px;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 22px;font:400 11px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--fog);border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(14,15,10,.94),rgba(14,15,10,.7));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#bar .l,#bar .r{display:flex;align-items:center;gap:16px}
+.sig{display:inline-flex;align-items:flex-end;gap:2px;height:12px}
+.sig i{width:3px;background:var(--lime);display:block}
+.sig i:nth-child(1){height:4px}.sig i:nth-child(2){height:6px}.sig i:nth-child(3){height:8px}.sig i:nth-child(4){height:10px}.sig i:nth-child(5){height:12px;animation:sig 2.4s steps(1) infinite}
+@keyframes sig{0%,60%{opacity:1}61%,80%{opacity:.15}81%{opacity:1}}
+#brand{color:var(--paper);display:flex;align-items:center;gap:10px}
+#brand b{width:9px;height:9px;background:var(--lime);display:inline-block}
+#timer{color:var(--paper);display:flex;align-items:center;gap:7px;min-width:88px}
+#timer b{width:7px;height:7px;border-radius:50%;background:var(--cherry);animation:blink 1.2s steps(1) infinite}
+.batt{width:28px;height:12px;border:1px solid var(--fog);padding:1px;position:relative}
+.batt::after{content:"";position:absolute;right:-4px;top:3px;width:2px;height:4px;background:var(--fog)}
+.batt i{display:block;height:100%;width:4%;background:var(--lime)}
+#snd{color:var(--fog);padding:6px 0}
+#snd[aria-pressed="true"]{color:var(--lime)}
+#tourLink{color:var(--fog);text-decoration:none;border:1px solid var(--line);padding:7px 9px}
+#tourLink:hover{color:var(--lime);border-color:var(--lime)}
+@keyframes blink{50%{opacity:0}}
+
+/* chapter rail */
+#rail{position:fixed;left:20px;top:50%;transform:translateY(-50%);z-index:30;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+#rail button{display:flex;align-items:center;gap:9px;font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:#5E624F;padding:2px 0}
+#rail .d{display:inline-grid;place-items:center;width:20px;height:17px;border:1px solid #33372A;border-radius:4px;transition:all .25s}
+#rail .n{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .35s,color .25s}
+#rail button:hover .n,#rail .on .n{max-width:120px}
+#rail button:hover{color:var(--paper)}
+#rail .on{color:var(--lime)}
+#rail .on .d{background:var(--lime);color:var(--night);border-color:var(--lime)}
+
+/* sections */
+main{position:relative;z-index:3}
+.ch{position:relative;min-height:100vh;display:flex;align-items:center;padding:120px 6vw 120px calc(var(--rail) + 3.5vw)}
+.txt{position:relative;max-width:min(680px,52vw)}
+.bgnum{position:absolute;left:calc(var(--rail) - 1vw);top:50%;transform:translateY(-50%);font:900 clamp(260px,36vw,640px)/.78 var(--disp);color:transparent;-webkit-text-stroke:1px #22261A;z-index:-1;pointer-events:none;user-select:none;letter-spacing:-.02em}
+.kick{font:400 11px/1.3 var(--pix);letter-spacing:.08em;text-transform:uppercase;color:var(--lime);display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 26px}
+.kick .k{display:inline-grid;place-items:center;min-width:32px;height:26px;padding:0 6px;border:1px solid var(--lime);border-radius:7px;font-size:12px;box-shadow:0 3px 0 var(--olive)}
+.kick .sep{color:var(--olive)}
+h1,h2,h3{font-family:var(--disp);font-weight:900;text-transform:uppercase;margin:0;letter-spacing:-.005em}
+h1{font-size:clamp(72px,min(10.6vw,20vh),200px);line-height:.82;margin-bottom:30px}
+h2{font-size:clamp(54px,min(8.2vw,15vh),150px);line-height:.84;margin-bottom:28px}
+h2.s{font-size:clamp(48px,min(6.4vw,11vh),112px)}
+h1 em,h2 em{font-style:normal;color:var(--lime)}
+.o{color:transparent;-webkit-text-stroke:2px var(--paper)}
+em .o,.o.l{-webkit-text-stroke-color:var(--lime)}
+.lead{font:400 clamp(22px,1.75vw,30px)/1.1 var(--term);color:var(--paper);opacity:.9;max-width:34ch;margin:0 0 22px}
+.note{font:400 10px/1.5 var(--pix);color:var(--fog);letter-spacing:.05em;text-transform:uppercase;max-width:60ch}
+.note b{color:var(--paper);font-weight:400}
+.ex{display:inline-block;font:400 9px/1 var(--pix);letter-spacing:.08em;text-transform:uppercase;color:var(--night);background:var(--fog);padding:4px 5px;vertical-align:middle;margin-left:8px}
+kbd{font:400 11px/1 var(--pix);display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 5px;border:1px solid var(--fog);border-radius:5px;box-shadow:0 2px 0 #3A3E2F;color:var(--paper);margin:0 2px}
+
+/* hero */
+.hero .txt{max-width:min(900px,60vw)}
+.spec{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 34px}
+.spec span{font:400 11px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;padding:9px 11px 9px 24px;border:1px solid #3A4120;position:relative;color:var(--paper)}
+.spec span::before{content:"";position:absolute;left:10px;top:50%;width:6px;height:6px;margin-top:-3px;background:var(--lime)}
+.hint{font:400 11px/1.6 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--fog);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hint .arr{color:var(--lime);animation:bob 1.4s ease-in-out infinite;display:inline-block}
+@keyframes bob{50%{transform:translateY(4px)}}
+
+/* ticker */
+.ticker{position:relative;z-index:3;background:var(--lime);color:var(--night);transform:rotate(-2.2deg) scale(1.04);overflow:hidden;padding:14px 0 10px;margin:40px 0;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.ticker.alt{transform:rotate(1.6deg) scale(1.04);background:var(--paper)}
+.tk{display:flex;width:max-content;will-change:transform}
+.tk span{font:900 clamp(40px,5.4vw,92px)/.9 var(--disp);text-transform:uppercase;white-space:nowrap;padding:0 26px;display:flex;align-items:center;gap:18px}
+.tk i{font:400 12px/1 var(--pix);font-style:normal;letter-spacing:.06em;border:2px solid var(--night);padding:6px 7px}
+.tk span::after{content:"";width:16px;height:16px;background:var(--night);margin-left:34px;transform:rotate(45deg)}
+
+/* flow */
+.flow{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:0 0 28px}
+.flow li{font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:#5E624F;border:1px solid #2E3224;padding:8px 10px}
+.flow li.on{color:var(--night);background:var(--lime);border-color:var(--lime)}
+.flow li.done{color:var(--lime-dim);border-color:#3A4120}
+
+/* problem */
+.stat{display:flex;align-items:flex-end;gap:22px;margin:8px 0 24px;flex-wrap:wrap}
+.stat .big{font:900 clamp(110px,13vw,220px)/.76 var(--disp);color:var(--cherry)}
+.stat .cap{font:400 11px/1.5 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--paper);max-width:24ch;padding-bottom:6px}
+.probs{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:640px;margin:4px 0 18px}
+.probs>div{border:1px solid var(--line);background:rgba(16,18,11,.85);padding:16px 16px 14px;display:flex;flex-direction:column;gap:12px}
+.probs .big{font:900 clamp(64px,6.4vw,110px)/.8 var(--disp);color:var(--cherry)}
+.probs .abc{position:relative;align-self:flex-start;color:transparent;-webkit-text-stroke:2px var(--cherry)}
+.probs .abc::after{content:"";position:absolute;left:-6%;right:-6%;top:46%;height:.09em;background:var(--cherry);transform:rotate(-14deg)}
+.probs .cap{font:400 11px/1.5 var(--pix);letter-spacing:.05em;text-transform:uppercase;color:var(--paper)}
+.fix{max-width:640px;background:var(--lime);color:var(--night);padding:14px 18px 12px;font:400 clamp(21px,1.6vw,26px)/1.05 var(--term);margin-bottom:16px}
+.fix b{font:900 1.25em/1 var(--disp);text-transform:uppercase;margin-right:8px}
+.months{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;max-width:460px;margin:0 0 20px}
+.months span{font:400 10px/1 var(--pix);text-align:center;padding:12px 0 9px;border:1px solid #2E3224;color:#5E624F}
+.months span.on{background:var(--cherry);border-color:var(--cherry);color:var(--night)}
+
+/* listen */
+.tx{border:1px solid var(--line);background:rgba(16,18,11,.88);padding:22px 24px;max-width:600px;margin-top:6px}
+.who{font:400 10px/1 var(--pix);letter-spacing:.08em;text-transform:uppercase;color:var(--fog);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.who::before{content:"";width:6px;height:6px;background:var(--lime)}
+.who.r::before{background:var(--paper)}
+.sw{display:block;font:400 clamp(26px,2.2vw,36px)/1.02 var(--term);color:var(--lime);margin:0 0 6px;quotes:"“" "”"}
+.gloss{font:400 20px/1.1 var(--term);color:var(--fog);margin-bottom:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.chips span{font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;background:var(--paper);color:var(--night);padding:8px 9px}
+.rb{display:block;font:400 clamp(22px,1.8vw,28px)/1.05 var(--term);color:var(--paper);margin:0 0 14px;quotes:"“" "”"}
+.yes{display:inline-flex;align-items:center;gap:14px;font:900 46px/.9 var(--disp);text-transform:uppercase;color:var(--night);background:var(--lime);padding:10px 16px 6px;transform:rotate(-3deg)}
+.yes small{font:400 10px/1 var(--pix);letter-spacing:.06em}
+
+/* know */
+.read{margin:4px 0 22px;max-width:520px;border-top:1px solid var(--line)}
+.read div{display:flex;align-items:baseline;gap:10px;padding:13px 0 11px;border-bottom:1px solid var(--line)}
+.read dt{font:400 11px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--fog);flex:none}
+.read .dots{flex:1;border-bottom:2px dotted #3A3E2F;transform:translateY(-4px)}
+.read dd{margin:0;font:900 40px/.8 var(--disp);text-transform:uppercase;color:var(--paper)}
+.read dd small{font-size:22px;color:var(--fog);margin-left:4px}
+.read .red dd{color:var(--cherry)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:520px;margin-bottom:18px}
+.two div{border:1px solid var(--line);padding:12px 14px;font:400 19px/1.05 var(--term);color:var(--fog)}
+.two b{display:block;font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--paper);margin-bottom:8px;font-weight:400}
+
+/* answer */
+.rank{max-width:540px;margin:0 0 22px}
+.rank .row{display:grid;grid-template-columns:150px 1fr 56px;align-items:center;gap:12px;padding:6px 0}
+.rank .nm{font:400 11px/1 var(--pix);letter-spacing:.05em;text-transform:uppercase;color:var(--paper)}
+.rank .cells{display:grid;grid-template-columns:repeat(25,1fr);gap:2px;height:18px}
+.rank .cells i{background:#22261A}
+.rank .cells i.on{background:var(--lime)}
+.rank .row:not(:first-child) .cells i.on{background:var(--fog)}
+.rank .pc{font:900 30px/.8 var(--disp);text-align:right}
+.ans{border:1px solid var(--lime);background:rgba(16,18,11,.9);padding:20px 22px;max-width:540px;position:relative}
+.ans h3{font-size:clamp(34px,3vw,48px);line-height:.9;margin:8px 0 10px}
+.ans p{margin:0;font:400 22px/1.1 var(--term);color:var(--paper);opacity:.85}
+.stamp{display:inline-block;font:400 11px/1 var(--pix);letter-spacing:.08em;text-transform:uppercase;padding:8px 10px;border:2px solid currentColor;transform:rotate(-4deg)}
+.stamp.lime{background:var(--lime);color:var(--night);border-color:var(--lime)}
+.stamp.red{color:var(--cherry)}
+.ans .stamp{position:absolute;right:18px;top:-16px}
+
+/* guardrails */
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:640px;margin:0 0 24px}
+.key{border-radius:22px;background:linear-gradient(180deg,#22261A,#171A10);border:1px solid #33382A;box-shadow:0 6px 0 #0A0B07,inset 0 1px 0 rgba(255,255,255,.06);padding:16px 16px 18px;min-height:170px;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.key:hover{transform:translateY(3px);box-shadow:0 3px 0 #0A0B07,inset 0 1px 0 rgba(255,255,255,.06)}
+.key .d{font:900 64px/.8 var(--disp);color:var(--paper)}
+.key.hot{background:linear-gradient(180deg,#D3F25A,#B4DC22);border-color:var(--lime);color:var(--night)}
+.key.hot .d,.key.hot b{color:var(--night)}
+.key.hot span{color:#2C3510}
+.key b{font:900 26px/.9 var(--disp);text-transform:uppercase;margin-top:auto;color:var(--paper)}
+.key span{font:400 18px/1 var(--term);color:var(--fog);margin-top:6px}
+
+/* impact */
+.alert{border:2px solid var(--cherry);padding:18px 20px 20px;max-width:520px;background:rgba(16,18,11,.9);margin-bottom:20px}
+.alert .top{display:flex;justify-content:space-between;align-items:center;font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--cherry);margin-bottom:12px}
+.alert .top b{font-weight:400;animation:blink 1s steps(1) infinite}
+.alert h3{font-size:clamp(34px,3vw,46px);line-height:.92;margin-bottom:14px}
+
+/* vision */
+#c08{flex-direction:column;align-items:flex-start;justify-content:center}
+.langs{width:calc(100% + 6vw);margin-top:26px;overflow:hidden}
+.lang{display:flex;align-items:center;gap:22px;font:900 clamp(56px,min(8.6vw,13vh),160px)/.86 var(--disp);text-transform:uppercase;white-space:nowrap;color:transparent;-webkit-text-stroke:1.5px #555A47;will-change:transform}
+.lang.on{color:var(--lime);-webkit-text-stroke:0}
+.lang i{font:400 11px/1 var(--pix);font-style:normal;letter-spacing:.06em;-webkit-text-stroke:0;color:var(--night);background:var(--lime);padding:7px 8px}
+.crops{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.crops span{font:400 11px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;border:1px solid #3A4120;padding:9px 11px;color:var(--fog)}
+.crops span.on{color:var(--night);background:var(--lime);border-color:var(--lime)}
+
+/* future */
+#c09{display:block;padding-top:96px;padding-bottom:60px;overflow:hidden}
+#c09 .txt{max-width:min(760px,56vw)}
+.track{display:flex;gap:24px;width:max-content;margin-top:10px;padding-right:6vw}
+.feat{width:min(400px,80vw);min-height:min(400px,48vh);border-radius:30px;background:linear-gradient(180deg,#1E2117,#13150D);border:1px solid #33382A;box-shadow:0 10px 0 #090A06,0 40px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);padding:24px 26px 26px;display:flex;flex-direction:column;position:relative}
+.feat.hot{border-color:var(--lime);box-shadow:0 10px 0 #4B5A1A,0 40px 80px rgba(0,0,0,.45),0 0 60px rgba(198,244,50,.12)}
+.feat .hd{display:flex;align-items:flex-start;justify-content:space-between}
+.feat .num{font:900 120px/.74 var(--disp);color:var(--paper)}
+.feat .abc{font:400 11px/1 var(--pix);color:var(--fog);letter-spacing:.1em;margin-left:6px}
+.feat svg{width:76px;height:76px}
+.feat h3{font-size:clamp(40px,3.4vw,56px);line-height:.88;margin:22px 0 10px}
+.feat p{margin:0 0 18px;font:400 21px/1.08 var(--term);color:var(--paper);opacity:.82}
+.feat .stamp{margin-top:auto;align-self:flex-start}
+
+/* end */
+.end .txt{max-width:none}
+.end h2{font-size:clamp(64px,min(11vw,24vh),230px);line-height:.78;color:var(--lime)}
+.team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;max-width:560px;margin:8px 0 30px;border-top:1px solid var(--line)}
+.team span{font:900 28px/1 var(--disp);text-transform:uppercase;padding:13px 0 10px;border-bottom:1px solid var(--line)}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.btn{font:400 12px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;padding:15px 18px;border:1px solid var(--lime);color:var(--lime);text-decoration:none;display:inline-flex;gap:10px;align-items:center;box-shadow:0 4px 0 var(--olive);transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translateY(2px);box-shadow:0 2px 0 var(--olive)}
+.btn.fill{background:var(--lime);color:var(--night)}
+
+/* boot */
+#boot{position:fixed;inset:0;z-index:60;background:var(--night);display:grid;place-items:center;font:400 12px/1.8 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--lime)}
+#boot .in{width:min(420px,84vw)}
+#boot .lg{font:900 64px/.85 var(--disp);color:var(--paper);margin-bottom:20px}
+#boot .lg span{color:var(--lime)}
+#boot .pb{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;height:14px;margin:16px 0}
+#boot .pb i{background:#22261A}
+#boot .pb i.on{background:var(--lime)}
+#boot .log div span{color:var(--fog)}
+
+/* cursor */
+#cur{position:fixed;left:0;top:0;z-index:70;pointer-events:none;width:14px;height:14px;margin:-7px 0 0 -7px;background:var(--lime);mix-blend-mode:difference;display:none;align-items:center;justify-content:center;font:400 9px/1 var(--pix);letter-spacing:.06em;color:var(--night);transition:width .2s,height .2s,margin .2s,border-radius .2s}
+html.cur #cur{display:flex}
+#cur span{opacity:0;transition:opacity .15s}
+#cur.press{width:64px;height:28px;margin:-14px 0 0 -32px;mix-blend-mode:normal;border-radius:7px}
+#cur.press span{opacity:1}
+
+@media (max-width:760px){
+  :root{--rail:0px}
+  #rail,#brand,#tourLink{display:none}
+  #bar{padding:0 14px}
+  #shade{background:linear-gradient(180deg,rgba(14,15,10,0) 0%,rgba(14,15,10,.15) 40%,rgba(14,15,10,.75) 70%)}
+  .ch{align-items:flex-end;padding:54vh 16px 70px;min-height:100vh}
+  .txt,.hero .txt,#c09 .txt{max-width:100%;background:rgba(14,15,10,.84);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line);padding:22px 18px}
+  .bgnum{display:none}
+  h1{font-size:clamp(60px,17vw,96px)}
+  h2,h2.s{font-size:clamp(46px,13vw,76px)}
+  .keys,.probs{grid-template-columns:1fr}
+  .end h2{font-size:14vw}
+  .key{min-height:0;flex-direction:row;align-items:center;gap:14px}
+  .key b{margin:0}
+  .rank .row{grid-template-columns:96px 1fr 44px}
+  #c08{align-items:stretch}
+  .langs{width:100%;background:rgba(14,15,10,.84);padding:10px 0}
+  #c09{padding:54vh 16px 70px}
+  .track{flex-direction:column;width:auto;padding:0;margin-top:16px}
+  .feat{width:100%;min-height:0}
+  .team{grid-template-columns:1fr}
+  .ticker{margin:10px 0}
+}
+@media (prefers-reduced-motion:reduce){#grain,.hint .arr,.sig i,#timer b{animation:none}}
+
+#labels{position:fixed;inset:0;z-index:2;pointer-events:none}
+.tag{position:absolute;left:0;top:0;font:400 10px/1.25 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--lime);background:rgba(14,15,10,.88);border-left:2px solid var(--lime);padding:6px 9px;white-space:nowrap;opacity:0;transition:opacity .35s;will-change:transform}
+.tag small{display:block;color:var(--fog);font-size:9px;margin-top:3px}
+#lcdw{position:fixed;right:22px;bottom:22px;z-index:2;width:268px;padding:12px 14px;border-radius:24px;background:linear-gradient(180deg,#22261A,#14160E);border:1px solid #33382A;box-shadow:0 20px 50px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06)}
+#lcdw .lw{display:flex;justify-content:space-between;font:400 9px/1 var(--pix);letter-spacing:.08em;text-transform:uppercase;color:var(--fog);margin:2px 4px 10px}
+#lcdw .lw b{color:var(--cherry);font-weight:400;animation:blink 1.2s steps(1) infinite}
+#lcdw .lw.bot{margin:10px 4px 0;color:#5E624F}
+#lcdw{transition:opacity .4s,transform .4s}
+#lcdw.off{opacity:0;transform:translateY(30px);pointer-events:none}
+#lcd{display:block;width:240px;height:160px;border-radius:6px;box-shadow:0 0 0 4px #070805,0 0 44px rgba(198,244,50,.2)}
+@media (max-width:760px),(max-height:640px){#lcdw{display:none}}
+</style>
+</head>
+<body>
+<canvas id="scene" aria-hidden="true"></canvas>
+<div id="shade"></div>
+<div id="labels" aria-hidden="true"></div>
+<div id="vig"></div>
+<div id="crt"></div>
+<div id="grain"></div>
+<div id="cur" aria-hidden="true"><span>PRESS</span></div>
+
+<div id="boot" aria-hidden="true">
+  <div class="in">
+    <div class="lg">Small talk,<br><span>big harvest.</span></div>
+    <div class="pb" id="bootBar"></div>
+    <div class="log" id="bootLog"></div>
+  </div>
+</div>
+
+<header id="bar">
+  <div class="l"><span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>Hotline</span></div>
+  <div id="brand"><b></b>Small Talk, Big Harvest</div>
+  <div class="r">
+    <a id="tourLink" href="tour.html">3D tour</a>
+    <button id="snd" aria-pressed="true" title="Key tones (M)">Snd on</button>
+    <span id="timer" aria-label="Scroll progress"><b></b><span id="time">00:00</span></span>
+    <span class="batt" aria-hidden="true"><i id="battI"></i></span>
+  </div>
+</header>
+
+<nav aria-label="Chapters"><ol id="rail"></ol></nav>
+
+<div id="lcdw" aria-hidden="true">
+  <div class="lw"><span>Noor's phone</span><b>● Live</b></div>
+  <canvas id="lcd" width="480" height="320"></canvas>
+  <div class="lw bot"><span>Scroll or dial 1–9 · 0</span><span>#</span></div>
+</div>
+
+<main>
+<section class="ch hero" id="c00" data-key="*" data-label="Start">
+  <div class="txt">
+    <p class="kick"><span>Hack-Nation × World Bank</span><span class="sep">/</span><span>Small AI for Development · Agriculture</span></p>
+    <h1 class="split">Small talk,<br><em>big harvest.</em></h1>
+    <p class="lead dec">An AI hotline that helps farmers diagnose a sick plant. From any phone, by voice in Hindi, without a data bundle.</p>
+    <div class="spec"><span>Any phone</span><span>Hindi voice</span><span>No data bundle</span><span>A person when unsure</span></div>
+    <p class="hint"><span class="arr">▼</span> Scroll to dial <span class="sep">·</span> or press <kbd>1</kbd>–<kbd>9</kbd></p>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true"><div class="tk" data-speed="1">
+  <span>Namaste <i>hello</i></span><span>Kisan <i>farmer</i></span><span>Khet <i>field</i></span><span>Fasal <i>crop</i></span><span>Patte <i>leaves</i></span><span>Baarish <i>rain</i></span><span>Haan <i>yes</i></span><span>Dhanyavaad <i>thank you</i></span>
+</div></div>
+
+<section class="ch" id="c01" data-key="1" data-label="Problem">
+  <div class="bgnum" aria-hidden="true">01</div>
+  <div class="txt">
+    <p class="kick"><span class="k">1</span><span>The problem</span></p>
+    <h2 class="split s">Disease spreads in <em>weeks.</em> Advice comes <span class="o">twice a year.</span></h2>
+    <p class="lead dec">Noor farms a small plot. Her phone makes calls and sends SMS, nothing more. Too few extension officers reach her village.</p>
+    <div class="probs">
+      <div><span class="big">2×</span><span class="cap">Extension officer visits per year, at best. Rust can cross a field in weeks.</span></div>
+      <div><span class="big abc" aria-label="Cannot read">ABC</span><span class="cap">Many farmers cannot read or write. Apps, SMS menus and leaflets leave them out.</span></div>
+    </div>
+    <div class="fix"><b>So we use voice.</b> Noor calls and describes the problem in Hindi. No reading, no typing.</div>
+    <p class="note">Officer visits: challenge brief, Annex B</p>
+  </div>
+</section>
+
+<section class="ch" id="c02" data-key="2" data-label="Call">
+  <div class="bgnum" aria-hidden="true">02</div>
+  <div class="txt">
+    <p class="kick"><span class="k">2</span><span>Step 1 · Call</span></p>
+    <ol class="flow"><li class="on">01 Call</li><li>02 Listen</li><li>03 Context</li><li>04 Answer</li></ol>
+    <h2 class="split">Noor <em>calls.</em> From <span class="o">any phone.</span></h2>
+    <p class="lead dec">A short number. No app to install, no data bundle, no reading. Just a normal phone call.</p>
+    <p class="note">The phone does nothing smart. All AI runs in the background system.</p>
+  </div>
+</section>
+
+<section class="ch" id="c03" data-key="3" data-label="Listen">
+  <div class="bgnum" aria-hidden="true">03</div>
+  <div class="txt">
+    <p class="kick"><span class="k">3</span><span>Step 2 · Listen</span></p>
+    <ol class="flow"><li class="done">01 Call</li><li class="on">02 Listen</li><li>03 Context</li><li>04 Answer</li></ol>
+    <h2 class="split s">The line <em>listens.</em> Then checks.</h2>
+    <p class="lead dec">Speech AI turns her Hindi into symptoms and reads them back. No advice until Noor confirms.</p>
+    <div class="tx">
+      <div class="who">Noor · Hindi</div>
+      <q class="sw" lang="hi">पत्तों के नीचे नारंगी पाउडर है, और बहुत सारे पत्ते गिर रहे हैं।</q>
+      <div class="gloss">“The leaves have orange powder underneath, and many are falling.”</div>
+      <div class="chips"><span>orange powder</span><span>under the leaf</span><span>leaves falling</span></div>
+      <div class="who r">Hotline · read-back</div>
+      <q class="rb">You said: orange powder under the leaves, leaves falling. Is that right?</q>
+      <div><span class="yes" lang="hi">Haan. <small>✓ yes, confirmed</small></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="ch" id="c04" data-key="4" data-label="Context">
+  <div class="bgnum" aria-hidden="true">04</div>
+  <div class="txt">
+    <p class="kick"><span class="k">4</span><span>Step 3 · Context</span></p>
+    <ol class="flow"><li class="done">01 Call</li><li class="done">02 Listen</li><li class="on">03 Context</li><li>04 Answer</li></ol>
+    <h2 class="split">It knows <em>her field.</em></h2>
+    <p class="lead dec">Altitude, this week’s weather and what neighbours report. Same words, different field, different answer.</p>
+    <dl class="read">
+      <div><dt>Altitude</dt><span class="dots"></span><dd><span data-count="1700">1,700</span><small>m</small></dd></div>
+      <div><dt>Rain</dt><span class="dots"></span><dd><span data-count="5">5</span><small>of last 7 days</small></dd></div>
+      <div><dt>Temperature</dt><span class="dots"></span><dd>19–24<small>°C</small></dd></div>
+      <div class="red"><dt>Neighbours</dt><span class="dots"></span><dd><span data-count="3">3</span><small>report rust</small></dd></div>
+    </dl>
+    <div class="two"><div><b>Lower, warm, wet</b>Leaf rust likes it here.</div><div><b>Cool, dry, windy</b>Blight likes it there.</div></div>
+    <p class="note">Plot context <span class="ex">example</span> · Caller ID → cooperative farmer registry → plot · weather from open data</p>
+  </div>
+</section>
+
+<section class="ch" id="c05" data-key="5" data-label="Answer">
+  <div class="bgnum" aria-hidden="true">05</div>
+  <div class="txt">
+    <p class="kick"><span class="k">5</span><span>Step 4 · Answer</span></p>
+    <ol class="flow"><li class="done">01 Call</li><li class="done">02 Listen</li><li class="done">03 Context</li><li class="on">04 Answer</li></ol>
+    <h2 class="split s">One safe step. <em>During the call.</em></h2>
+    <p class="lead dec">Symptoms plus context are ranked against a crop disease base. The answer comes from an expert-reviewed list, plus an SMS summary.</p>
+    <div class="rank" aria-label="Likely cause, example scores">
+      <div class="row"><span class="nm">Leaf rust</span><span class="cells" data-v="82"></span><span class="pc">82%</span></div>
+      <div class="row"><span class="nm">Leaf blight</span><span class="cells" data-v="10"></span><span class="pc">10%</span></div>
+      <div class="row"><span class="nm">Leaf spot</span><span class="cells" data-v="8"></span><span class="pc">8%</span></div>
+    </div>
+    <div class="ans">
+      <span class="stamp lime">SMS sent</span>
+      <div class="who">Answer · expert-reviewed <span class="ex">example</span></div>
+      <h3>Likely leaf rust.</h3>
+      <p>Collect and bury fallen leaves. Your extension officer will call you about spraying.</p>
+    </div>
+  </div>
+</section>
+
+<section class="ch" id="c06" data-key="6" data-label="Guardrails">
+  <div class="bgnum" aria-hidden="true">06</div>
+  <div class="txt">
+    <p class="kick"><span class="k">6</span><span>Responsible AI</span></p>
+    <h2 class="split">When in doubt, <em>a person decides.</em></h2>
+    <div class="keys">
+      <div class="key"><span class="d">1</span><b>Checks first</b><span>Reads back before advising</span></div>
+      <div class="key"><span class="d">2</span><b>Approved answers</b><span>Only expert-reviewed text</span></div>
+      <div class="key hot"><span class="d">3</span><b>Not sure?</b><span>A person calls back</span></div>
+    </div>
+    <p class="lead dec">It never tells her to buy or spray. Nothing is generated freely.</p>
+    <p class="note">Consent at registration · data never sold · audio deleted after transcription · neighbour reports only as counts per area</p>
+  </div>
+</section>
+
+<section class="ch" id="c07" data-key="7" data-label="Impact">
+  <div class="bgnum" aria-hidden="true">07</div>
+  <div class="txt">
+    <p class="kick"><span class="k">7</span><span>Impact</span></p>
+    <h2 class="split">Every call is an <em>early warning.</em></h2>
+    <p class="lead dec">Confirmed reports cluster by area and week, so rare officer visits go where the outbreak is.</p>
+    <div class="alert">
+      <div class="top"><span>Alert · this week <span class="ex">example</span></span><b>● Live</b></div>
+      <h3>Leaf rust reported by <span data-count="4">4</span> farmers within 5 km.</h3>
+      <span class="stamp red">Visit this area first</span>
+    </div>
+    <p class="note">Noor hears: “Farmers near you report the same.” Counts per area, never names.</p>
+  </div>
+</section>
+
+<div class="ticker alt" aria-hidden="true"><div class="tk" data-speed="-1">
+  <span>Hindi <i>pilot</i></span><span>Swahili</span><span>Amharic</span><span>Hausa</span><span>Spanish</span><span>Bahasa</span><span>Rice</span><span>Wheat</span><span>Maize</span>
+</div></div>
+
+<section class="ch" id="c08" data-key="8" data-label="Vision">
+  <div class="bgnum" aria-hidden="true">08</div>
+  <div class="txt">
+    <p class="kick"><span class="k">8</span><span>Vision</span></p>
+    <h2 class="split s">One cooperative today. <em>Any crop, any language tomorrow.</em></h2>
+    <p class="lead dec">The engine, the read-back and the guardrails stay. Swap the speech pack for a new language, the knowledge base for a new crop.</p>
+  </div>
+  <div class="langs" aria-label="Languages">
+    <div class="lang on" data-dir="1">Hindi <i>Pilot</i></div>
+    <div class="lang" data-dir="-1">Swahili · Amharic · Hausa</div>
+    <div class="lang" data-dir="1">Spanish · Bahasa · …</div>
+  </div>
+  <div class="txt" style="margin-top:22px">
+    <div class="crops"><span class="on">One knowledge base per crop</span><span>Rice</span><span>Wheat</span><span>Maize</span></div>
+    <p class="note" style="margin-top:16px">Pilot metrics: time to first advice · calls resolved vs. routed to a person · officer visits that hit an active outbreak</p>
+  </div>
+</section>
+
+<section class="ch" id="c09" data-key="9" data-label="Next up">
+  <div class="txt">
+    <p class="kick"><span class="k">9</span><span>Future features</span></p>
+    <h2 class="split s">What comes <em>next.</em></h2>
+    <p class="lead dec">Four features on our roadmap: from a photo check we have already prototyped to an outbreak view for the whole cooperative.</p>
+  </div>
+  <div class="track" id="track">
+    <article class="feat hot">
+      <div class="hd"><div><span class="num">1</span><span class="abc">.,?</span></div><span class="px" data-px="leaf"></span></div>
+      <h3>Photo check</h3>
+      <p>Snap a leaf, get a second opinion. A 1.2 MB image model (MobileNetV3-Small) runs offline in a smartphone browser.</p>
+      <span class="stamp lime">Prototype built</span>
+    </article>
+    <article class="feat">
+      <div class="hd"><div><span class="num">2</span><span class="abc">ABC</span></div><span class="px" data-px="rain"></span></div>
+      <h3>Weather alerts</h3>
+      <p>An SMS before a wet week, when rust risk rises. Before the first spot shows.</p>
+      <span class="stamp">Next</span>
+    </article>
+    <article class="feat">
+      <div class="hd"><div><span class="num">3</span><span class="abc">DEF</span></div><span class="px" data-px="cal"></span></div>
+      <h3>Plot memory</h3>
+      <p>Reminders before the outbreak window her plot has had in past seasons.</p>
+      <span class="stamp">Next</span>
+    </article>
+    <article class="feat">
+      <div class="hd"><div><span class="num">4</span><span class="abc">GHI</span></div><span class="px" data-px="map"></span></div>
+      <h3>Officer dashboard</h3>
+      <p>The outbreak map for the whole cooperative, week by week.</p>
+      <span class="stamp">Later</span>
+    </article>
+  </div>
+  <p class="note" style="margin-top:26px;max-width:70ch">Photo check: our training data was limited, so it is a second opinion for farmers or officers who own a smartphone, never a replacement for the call.</p>
+</section>
+
+<section class="ch end" id="c10" data-key="#" data-label="Thanks">
+  <div class="txt">
+    <p class="kick"><span class="k">#</span><span>Call ended · 02:06</span></p>
+    <h2 class="split" lang="hi">Dhanyavaad.</h2>
+    <p class="lead dec">Small talk, big harvest. A phone call that gives Noor one safe step, and gives her cooperative an early warning.</p>
+    <div class="team"><span>Mahmoud Ahmed Alfourawi</span><span>Bhati Shashank</span><span>Jörg Heseler</span><span>Gabriel Tsonyev</span></div>
+    <div class="btns"><a class="btn fill" href="#c00" data-go="0">↑ Call again</a><a class="btn" href="tour.html">Open the 3D island tour →</a></div>
+    <p class="note">Hack-Nation × World Bank · Small AI for Development · Agriculture track<br>Numbers marked <span class="ex">example</span> are illustrative.</p>
+  </div>
+</section>
+</main>
+
+<script src="vendor/gsap/gsap.min.js"></script>
+<script src="vendor/gsap/ScrollTrigger.min.js"></script>
+<script src="vendor/gsap/SplitText.min.js"></script>
+<script src="vendor/lenis/lenis.min.js"></script>
+<script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { HorizontalTiltShiftShader } from 'three/addons/shaders/HorizontalTiltShiftShader.js';
+import { VerticalTiltShiftShader } from 'three/addons/shaders/VerticalTiltShiftShader.js';
+
+const { gsap, ScrollTrigger, SplitText, Lenis } = window;
+gsap.registerPlugin(ScrollTrigger, SplitText);
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = t => t * t * t * (t * (6 * t - 15) + 10);
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FINE = matchMedia('(pointer: fine)').matches;
+const SHOT = new URLSearchParams(location.search).has('shot');
+
+/* ---------------- boot screen ---------------- */
+const bootBar = $('#bootBar'), bootLog = $('#bootLog');
+for (let i = 0; i < 20; i++) bootBar.appendChild(document.createElement('i'));
+const bootLines = [['Signal', '▂▃▅▇'], ['Hindi voice', 'ok'], ['Disease base', 'ok'], ['Officer on call', 'ok']];
+let bootStep = 0;
+const bootTimer = setInterval(() => {
+  bootStep++;
+  [...bootBar.children].forEach((c, i) => c.classList.toggle('on', i < bootStep * 2));
+  if (bootStep % 2 === 0 && bootLines[bootStep / 2 - 1]) {
+    const [a, b] = bootLines[bootStep / 2 - 1], d = document.createElement('div');
+    d.innerHTML = `&gt; ${a} <span>…</span> ${b}`; bootLog.appendChild(d);
+  }
+  if (bootStep >= 10) clearInterval(bootTimer);
+}, 70);
+
+await Promise.all([
+  document.fonts.load('900 60px "Big Shoulders Display"'),
+  document.fonts.load('8px Silkscreen'), document.fonts.load('16px Silkscreen'),
+  document.fonts.load('24px VT323'),
+  document.fonts.load('800 40px "Public Sans"'), document.fonts.load('500 20px "Public Sans"'),
+  document.fonts.load('700 20px "JetBrains Mono"'), document.fonts.load('500 20px "JetBrains Mono"'),
+]).catch(() => {});
+
+const C = {
+  bg:0xEEE9E1, white:0xFFFFFF, cream:0xF8F3EA, esp:0x24160F, esp2:0x3D2A1F,
+  orange:0xB9E52F, rust:0xD9772B, soil:0x8A5A3C, soilDk:0x6A4330, leaf:0x6E9A4F, leafDk:0x557E3D,
+  cherry:0xB8322A, tan:0xE7D8C3, tan2:0xD9C4A8, grey:0xD8D0C5, steel:0xBFB6AA, rain:0x9DB0BF, maize:0xE8B83A
+};
+const mats = {};
+function mat(color, rough = .62, extra = {}) {
+  const k = color + ':' + rough + JSON.stringify(extra);
+  return mats[k] ??= new THREE.MeshStandardMaterial({ color, roughness: Math.max(rough, .78), metalness: 0, ...extra, flatShading: false });
+}
+function mesh(geo, m, x = 0, y = 0, z = 0) {
+  const o = new THREE.Mesh(geo, m);
+  o.position.set(x, y, z); o.castShadow = true; o.receiveShadow = true;
+  return o;
+}
+const rbox = (w, h, d, r = .08) => new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2, h / 2, d / 2));
+const clamp01 = t => Math.min(Math.max(t, 0), 1);
+const ease = t => 1 - Math.pow(1 - clamp01(t), 3);
+const back = t => { t = clamp01(t); const c = 1.7; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); };
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+/* ---------- renderer, scene, camera ---------- */
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 1.05;
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0x0E0F0A);
+scene.fog = new THREE.Fog(0x0E0F0A, 40, 84);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .28;
+
+const camera = new THREE.PerspectiveCamera(26, 1, .1, 300);
+const OFFSET = new THREE.Vector3(10, 10.5, 15).normalize();
+const CARD_YAW = Math.atan2(OFFSET.x, OFFSET.z);
+const UP = new THREE.Vector3(0, 1, 0);
+
+scene.add(new THREE.HemisphereLight(0xC4D2FF, 0x4A3A28, 1.05));
+const sun = new THREE.DirectionalLight(0xFFCF99, 3.4);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -17, right: 17, top: 17, bottom: -17, near: 1, far: 60 });
+sun.shadow.bias = -0.0004; sun.shadow.normalBias = .02; sun.shadow.radius = 3;
+scene.add(sun, sun.target);
+
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(600, 600), new THREE.MeshStandardMaterial({ color: 0x15170F, roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true;
+scene.add(ground);
+
+/* contact shadow texture (soft AO under every island) */
+const contactTex = (() => {
+  const s = 256, cv = document.createElement('canvas'); cv.width = cv.height = s;
+  const c = cv.getContext('2d'), g = c.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+  g.addColorStop(0, 'rgba(0,0,0,.55)'); g.addColorStop(.55, 'rgba(0,0,0,.25)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+  c.fillStyle = g; c.fillRect(0, 0, s, s);
+  return new THREE.CanvasTexture(cv);
+})();
+const contactMat = new THREE.MeshBasicMaterial({ map: contactTex, transparent: true, depthWrite: false, toneMapped: false });
+
+/* ---------- builders ---------- */
+function platform(w, d, accent = C.orange) {
+  const g = new THREE.Group();
+  const shadow = new THREE.Mesh(new THREE.PlaneGeometry(w * 1.45, d * 1.55), contactMat);
+  shadow.rotation.x = -Math.PI / 2; shadow.position.y = .012; g.add(shadow);
+  g.add(mesh(rbox(w - .1, .7, d - .1, .26), mat(0x7B4F35, .95), 0, .12, 0));
+  g.add(mesh(rbox(w, .1, d, .05), mat(0x5F3C29, .95), 0, .1, 0));
+  g.add(mesh(rbox(w + .04, .2, d + .04, .1), mat(0x8DB062, .9), 0, .43, 0));
+  for (let i = 0; i < Math.round(w * .9); i++) {
+    const r = .07 + ((i * 37) % 10) / 100, x = -w / 2 + .5 + ((i * 7.3) % (w - 1)), z = (i % 2 ? 1 : -1) * (d / 2 + .02);
+    g.add(mesh(new THREE.SphereGeometry(r, 10, 8), mat(0xA79A86, .95), x, .18 + (i % 3) * .1, z));
+  }
+  g.add(mesh(rbox(.9, .05, .2, .02), mat(accent, .6), w / 2 - .9, .54, d / 2 - .35));
+  g.userData.platform = { w, d };
+  return g;
+}
+
+function roundRect(ctx, x, y, w, h, r) { ctx.beginPath(); ctx.roundRect(x, y, w, h, r); }
+function wrap(ctx, text, x, y, maxW, lh) {
+  let line = '', yy = y;
+  for (const word of text.split(' ')) {
+    const test = line ? line + ' ' + word : word;
+    if (ctx.measureText(test).width > maxW && line) { ctx.fillText(line, x, yy); line = word; yy += lh; }
+    else line = test;
+  }
+  ctx.fillText(line, x, yy); return yy + lh;
+}
+function texCanvas(w, h, draw, r = 3) {
+  const cv = document.createElement('canvas');
+  cv.width = w * r; cv.height = h * r;
+  const ctx = cv.getContext('2d'); ctx.scale(r, r); ctx.textBaseline = 'top';
+  draw(ctx, w, h);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  return tex;
+}
+function card(w, h, draw, { scale = .0105, depth = .09, bg = '#FFFFFF' } = {}) {
+  const tex = texCanvas(w, h, (ctx) => { roundRect(ctx, 0, 0, w, h, 16); ctx.fillStyle = bg; ctx.fill(); draw(ctx, w, h); });
+  const W = w * scale, H = h * scale, g = new THREE.Group();
+  g.add(mesh(rbox(W, H, depth, .16), mat(new THREE.Color(bg).getHex(), .5)));
+  const face = new THREE.Mesh(new THREE.PlaneGeometry(W, H), new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false }));
+  face.position.z = depth / 2 + .003; g.add(face);
+  g.userData.size = [W, H];
+  return g;
+}
+const F = (wgt, size, fam = 'Public Sans') => `${wgt} ${size}px "${fam}"`;
+function eyebrow(ctx, s, x, y, color = '#8A7767') {
+  ctx.fillStyle = '#B9E52F'; ctx.beginPath(); ctx.arc(x + 4, y + 6, 4, 0, 7); ctx.fill();
+  ctx.font = F(700, 12, 'JetBrains Mono'); ctx.fillStyle = color;
+  ctx.letterSpacing = '1.5px'; ctx.fillText(s.toUpperCase(), x + 14, y); ctx.letterSpacing = '0px';
+}
+function chip(ctx, s, x, y, bg = '#24160F', fg = '#F8F3EA') {
+  ctx.font = F(700, 13, 'JetBrains Mono');
+  const w = ctx.measureText(s).width + 20;
+  roundRect(ctx, x, y, w, 26, 6); ctx.fillStyle = bg; ctx.fill();
+  ctx.fillStyle = fg; ctx.fillText(s, x + 10, y + 6); return x + w + 8;
+}
+
+function bush(rusty = false, scale = 1) {
+  const g = new THREE.Group();
+  g.add(mesh(new THREE.CylinderGeometry(.04, .06, .36, 8), mat(C.soilDk, .9), 0, .18, 0));
+  const parts = [[0, .5, 0, .3], [.2, .4, .08, .22], [-.19, .42, -.06, .23], [.02, .74, -.02, .2], [.05, .36, -.2, .18]];
+  const leafMats = [];
+  parts.forEach(([x, y, z, r], i) => {
+    const m = (rusty && i % 2 === 0) ? mat(C.rust, .8) : mat(i % 2 ? C.leafDk : C.leaf, .85);
+    const s = mesh(new THREE.SphereGeometry(r, 20, 14), m, x, y, z);
+    s.scale.set(1, .82, 1); g.add(s); leafMats.push(s);
+  });
+  g.scale.setScalar(scale);
+  g.userData.leaves = leafMats;
+  return g;
+}
+function person(shirt = C.orange, s = 1) {
+  const g = new THREE.Group();
+  g.add(mesh(new THREE.CapsuleGeometry(.17, .42, 4, 12), mat(shirt, .7), 0, .38, 0));
+  g.add(mesh(new THREE.SphereGeometry(.15, 18, 14), mat(0x6B4532, .55), 0, .86, 0));
+  if (shirt === C.orange) {
+    g.add(mesh(new THREE.CylinderGeometry(.28, .3, .03, 24), mat(0xD9B676, .9), 0, .96, 0));
+    g.add(mesh(new THREE.CylinderGeometry(.12, .15, .12, 18), mat(0xD9B676, .9), 0, 1.03, 0));
+  }
+  g.scale.setScalar(s); return g;
+}
+function hut() {
+  const g = new THREE.Group();
+  g.add(mesh(rbox(1.1, .8, .9, .04), mat(C.cream, .8), 0, .4, 0));
+  const roof = mesh(new THREE.ConeGeometry(.92, .6, 4), mat(C.esp2, .8), 0, 1.1, 0);
+  roof.rotation.y = Math.PI / 4; g.add(roof);
+  g.add(mesh(new THREE.BoxGeometry(.26, .46, .02), mat(C.esp, .8), .1, .23, .46));
+  return g;
+}
+function pin(color = C.orange, s = 1) {
+  const g = new THREE.Group();
+  const cone = mesh(new THREE.ConeGeometry(.12, .42, 14), mat(color, .45), 0, .21, 0);
+  cone.rotation.x = Math.PI; g.add(cone);
+  g.add(mesh(new THREE.SphereGeometry(.17, 18, 14), mat(color, .45), 0, .48, 0));
+  g.scale.setScalar(s); return g;
+}
+function ring(color = C.orange, r = .5, tube = .025) {
+  const m = new THREE.Mesh(new THREE.TorusGeometry(r, tube, 8, 64), new THREE.MeshBasicMaterial({ color, transparent: true, toneMapped: false }));
+  m.rotation.x = Math.PI / 2; return m;
+}
+function featurePhone(s = 1, screenDraw) {
+  const g = new THREE.Group();
+  g.add(mesh(rbox(1, 2, .26, .16), mat(C.esp, .4), 0, 1, 0));
+  const scr = card(180, 150, screenDraw ?? ((c, w, h) => { c.fillStyle = '#F2E7D6'; c.fillRect(0, 0, w, h); }), { scale: .0042, depth: .02, bg: '#F2E7D6' });
+  scr.position.set(0, 1.48, .135); g.add(scr);
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 3; c++)
+    g.add(mesh(rbox(.2, .13, .05, .04), mat(r === 0 && c !== 1 ? C.orange : C.esp2, .55), (c - 1) * .26, .82 - r * .19, .14));
+  g.scale.setScalar(s); return g;
+}
+function envelope(color = C.orange) {
+  const g = new THREE.Group();
+  g.add(mesh(rbox(.5, .34, .06, .04), mat(color, .5)));
+  const flap = mesh(new THREE.BoxGeometry(.36, .03, .02), mat(C.esp, .6), 0, .05, .035); flap.rotation.z = .25; g.add(flap);
+  const flap2 = flap.clone(); flap2.rotation.z = -.25; g.add(flap2);
+  return g;
+}
+function cloudMesh(s = 1) {
+  const g = new THREE.Group();
+  [[0, 0, 0, .7], [.7, -.1, .1, .55], [-.7, -.12, 0, .5], [.25, .35, 0, .5]].forEach(([x, y, z, r]) =>
+    g.add(mesh(new THREE.IcosahedronGeometry(r, 1), mat(C.white, .9, { flatShading: true }), x, y, z)));
+  g.scale.setScalar(s); return g;
+}
+
+/* ---------- labels ---------- */
+const labelsEl = document.getElementById('labels');
+const tags = [];
+function tag(station, parent, local, num, text, sub) {
+  const el = document.createElement('div');
+  el.className = 'tag';
+  el.innerHTML = `${text}${sub ? `<small>${sub}</small>` : ''}`;
+  labelsEl.appendChild(el);
+  tags.push({ el, station, parent, local: new THREE.Vector3(...local) });
+}
+
+/* ---------- stations ---------- */
+const S = [];
+function station(def) { def.group = new THREE.Group(); def.index = S.length; S.push(def); return def; }
+
+station({
+  key: 'intro', short: 'Intro', eyebrow: 'Meet Noor',
+  title: 'Small Talk,<br><em>Big Harvest</em>',
+  text: 'An AI hotline that helps farmers diagnose a sick plant: from any phone, in Hindi, without a data bundle.',
+  chip: 'Smallholder farm', dist: 21, look: [0, .8, 0], yaw: 0,
+  notes: 'Noor farms a small plot. Her phone does calls and SMS, nothing more. In one sentence: she calls a number, describes what she sees on her crop in Hindi, and gets a safe first step, checked against her plot\'s altitude, weather and what neighbours are reporting.',
+  build(g) {
+    g.add(platform(13, 8));
+    g.add(mesh(rbox(9, .3, 6.6, .12), mat(C.soil, .95), -1.6, .65, 0));
+    const bushes = [];
+    const rusty = new Set([3, 9, 10, 16]);
+    let k = 0;
+    for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++, k++) {
+      const b = bush(rusty.has(k), .95);
+      b.position.set(-5.35 + c * 1.5, .8, -2.3 + r * 1.55);
+      b.userData.phase = k; g.add(b); bushes.push(b);
+    }
+    const h = hut(); h.position.set(4.6, .5, -1.6); g.add(h);
+    const noor = person(C.orange); noor.position.set(4.2, .5, 1.2); g.add(noor);
+    const ph = featurePhone(.18); ph.position.set(.18, .45, .12); ph.rotation.y = -.4; noor.add(ph);
+    tag(0, g, [-1.6, 2.2, -1], '', "Noor's plot", 'Smallholder farm');
+    tag(0, g, [4.2, 2.1, 1.2], '', 'Basic phone', 'Calls + SMS only');
+    return (t) => {
+      bushes.forEach(b => { b.rotation.z = Math.sin(t * 1.3 + b.userData.phase) * .025; });
+      noor.position.y = .5 + Math.abs(Math.sin(t * 2)) * .03;
+    };
+  }
+});
+
+station({
+  key: 'problem', short: 'Problem', eyebrow: 'The problem',
+  title: 'Disease spreads in weeks. <em>Advice comes twice a year.</em>',
+  text: 'Too few extension officers. Basic phones without data. Digital tools made for English readers.',
+  chip: 'Root causes', dist: 23, look: [0, .8, 0], yaw: .1,
+  notes: 'The extension officer reaches Noor\'s sub-county twice a year at best (brief, Annex B). Meanwhile leaf rust can spread across a plot in weeks. Root causes: too few experts, phones without data, tools that assume reading English.',
+  build(g) {
+    g.add(platform(14, 7.5));
+    g.add(mesh(rbox(4.2, .26, 3.6, .1), mat(C.soil, .95), -4.4, .63, .6));
+    const bushes = [];
+    for (let r = 0; r < 2; r++) for (let c = 0; c < 3; c++) {
+      const b = bush(false, .85); b.position.set(-5.6 + c * 1.25, .76, -.1 + r * 1.45);
+      g.add(b); bushes.push(b);
+    }
+    g.add(mesh(new THREE.BoxGeometry(9.4, .04, .9), mat(C.tan2, .95), 1.6, .54, 2.6));
+    for (let i = 0; i < 9; i++) g.add(mesh(new THREE.BoxGeometry(.5, .01, .07), mat(C.white, .9), -2.6 + i * 1.05, .565, 2.6));
+    const office = new THREE.Group();
+    office.add(mesh(rbox(2, 1.5, 1.6, .06), mat(C.white, .6), 0, .75, 0));
+    office.add(mesh(rbox(2.2, .14, 1.8, .05), mat(C.esp2, .8), 0, 1.57, 0));
+    office.add(mesh(new THREE.BoxGeometry(.4, .7, .02), mat(C.esp, .8), 0, .35, .81));
+    for (let i = 0; i < 3; i++) office.add(mesh(new THREE.BoxGeometry(.32, .28, .02), mat(0xBFD0DA, .2), -.6 + i * .6, 1.05, .81));
+    office.position.set(5.3, .5, -.9); g.add(office);
+    const cal = card(260, 210, (c) => {
+      eyebrow(c, 'Officer visits', 18, 16);
+      c.font = F(800, 22); c.fillStyle = '#24160F'; c.fillText('2 per year', 18, 38);
+      const months = 'JFMAMJJASOND';
+      for (let i = 0; i < 12; i++) {
+        const x = 18 + (i % 6) * 38, y = 82 + Math.floor(i / 6) * 58, on = i === 2 || i === 8;
+        roundRect(c, x, y, 32, 48, 6); c.fillStyle = on ? '#B9E52F' : '#F3ECE2'; c.fill();
+        c.font = F(700, 12, 'JetBrains Mono'); c.fillStyle = on ? '#24160F' : '#A3907E'; c.fillText(months[i], x + 11, y + 17);
+      }
+    });
+    cal.position.set(.6, 1.75, -1.6); cal.rotation.y = CARD_YAW; g.add(cal);
+    const van = new THREE.Group();
+    van.add(mesh(rbox(.9, .45, .5, .08), mat(C.white, .5), 0, .35, 0));
+    van.add(mesh(rbox(.4, .3, .48, .06), mat(C.orange, .45), .32, .5, 0));
+    for (const x of [-.28, .28]) for (const z of [-.25, .25]) {
+      const w = mesh(new THREE.CylinderGeometry(.11, .11, .06, 16), mat(C.esp, .8), x, .13, z); w.rotation.x = Math.PI / 2; van.add(w);
+    }
+    van.rotation.y = Math.PI; g.add(van);
+    tag(1, g, [5.3, 2.8, -.9], '', 'Extension office', 'Far away');
+    tag(1, g, [-4.4, 2.1, .6], '', 'Rust spreads', 'in weeks, not months');
+    return (t, lt) => {
+      const p = (lt % 12) / 12;
+      van.position.set(5.6 - p * 9.6, .5, 2.6);
+      van.visible = p < .97;
+      bushes.forEach((b, i) => {
+        const sick = ease((lt - 1.6 - i * 1.1) / 1.2);
+        b.userData.leaves.forEach((s, j) => { if (j % 2 === 0) s.material = sick > .5 ? mat(C.rust, .7, { flatShading: true }) : mat(C.leaf, .8, { flatShading: true }); });
+      });
+    };
+  }
+});
+
+station({
+  key: 'call', short: 'Call', eyebrow: 'Step 1 · Call',
+  title: 'Noor calls. <em>From any phone.</em>',
+  text: 'A short number. No app to install, no data bundle, no reading. Just a normal phone call.',
+  chip: 'Voice only', dist: 19, look: [0, 1.3, 0], yaw: -.1,
+  notes: 'Noor calls a short number from her basic phone. The phone does nothing smart: it only makes a call. All AI runs in the background system.',
+  build(g) {
+    g.add(platform(11, 7));
+    const phone = featurePhone(1.25, (c, w, h) => {
+      c.fillStyle = '#F2E7D6'; c.fillRect(0, 0, w, h);
+      c.font = F(700, 13, 'JetBrains Mono'); c.fillStyle = '#8A7767'; c.fillText('CALLING', 16, 18);
+      c.font = F(800, 34); c.fillStyle = '#24160F'; c.fillText('*384#', 16, 44);
+      c.font = F(600, 14); c.fillStyle = '#4F6B0C'; c.fillText('Voice · Hindi', 16, 100);
+    });
+    phone.position.set(-2.6, .5, .6); phone.rotation.set(-.12, .35, 0); g.add(phone);
+    const tower = new THREE.Group();
+    tower.add(mesh(new THREE.CylinderGeometry(.09, .2, 4.2, 10), mat(C.steel, .4), 0, 2.1, 0));
+    for (let i = 0; i < 3; i++) {
+      const a = i * Math.PI * 2 / 3, p = mesh(rbox(.16, .7, .32, .04), mat(C.white, .5), Math.cos(a) * .26, 3.7, Math.sin(a) * .26);
+      p.rotation.y = -a; tower.add(p);
+    }
+    const beacon = mesh(new THREE.SphereGeometry(.12, 16, 12), mat(C.orange, .3, { emissive: C.orange, emissiveIntensity: .6 }), 0, 4.3, 0);
+    tower.add(beacon);
+    tower.position.set(3.4, .5, -1.4); g.add(tower);
+    const rings = [0, 1, 2].map(() => { const r = ring(C.orange, .6); g.add(r); return r; });
+    const curve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(-2.3, 3.3, .7), new THREE.Vector3(.5, 6, -.3), new THREE.Vector3(3.4, 4.3, -1.4));
+    const dashes = new THREE.Line(new THREE.BufferGeometry().setFromPoints(curve.getPoints(40)), new THREE.LineDashedMaterial({ color: 0xC9B8A3, dashSize: .15, gapSize: .12 }));
+    dashes.computeLineDistances(); g.add(dashes);
+    const dots = [0, 1, 2, 3].map(() => { const d = mesh(new THREE.SphereGeometry(.09, 12, 10), mat(C.orange, .4)); g.add(d); return d; });
+    tag(2, g, [-2.6, 3.6, .6], '', 'Basic phone', 'Calls + SMS');
+    tag(2, g, [3.4, 5, -1.4], '', 'Mobile network', 'Voice only, no data');
+    return (t) => {
+      rings.forEach((r, i) => {
+        const p = ((t * .5) + i / 3) % 1;
+        r.position.set(-2.45, 2.55, .75); r.rotation.set(0, .35, 0);
+        r.scale.setScalar(.6 + p * 1.6); r.material.opacity = 1 - p;
+      });
+      dots.forEach((d, i) => d.position.copy(curve.getPoint(((t * .35) + i / 4) % 1)));
+      beacon.material.emissiveIntensity = .4 + Math.abs(Math.sin(t * 3)) * .8;
+    };
+  }
+});
+
+station({
+  key: 'listen', short: 'Listen', eyebrow: 'Step 2 · Listen',
+  title: 'The line listens, <em>then checks.</em>',
+  text: 'Speech AI turns her Hindi into symptoms and reads them back. No advice until Noor confirms.',
+  chip: 'Speech AI + read-back', dist: 20, look: [0, 1.7, 0], yaw: .08,
+  notes: 'Speech AI transcribes what she says in Hindi and extracts symptoms. Then the line repeats what it understood, so she can confirm or correct it before any advice is given. This read-back is our first guardrail.',
+  build(g) {
+    g.add(platform(12, 7));
+    const bars = [];
+    for (let i = 0; i < 26; i++) {
+      const b = mesh(rbox(.14, 1, .14, .05), mat(i % 5 === 0 ? C.orange : C.esp2, .45), -5 + i * .26, .5, 2.2);
+      g.add(b); bars.push(b);
+    }
+    const defs = [
+      [300, 132, (c, w) => { eyebrow(c, 'Noor · Hindi', 18, 16); c.font = F(600, 17); c.fillStyle = '#24160F'; wrap(c, '“Patton ke neeche narangi powder hai, aur bahut patte gir rahe hain.”', 18, 40, w - 36, 23); }],
+      [300, 120, (c) => { eyebrow(c, 'Symptoms found', 18, 16); let x = 18; x = chip(c, 'orange powder', x, 44, '#F3ECE2', '#24160F'); chip(c, 'under the leaf', x, 44, '#F3ECE2', '#24160F'); chip(c, 'leaves falling', 18, 78, '#F3ECE2', '#24160F'); }],
+      [300, 132, (c, w) => { eyebrow(c, 'Read-back', 18, 16); c.font = F(600, 17); c.fillStyle = '#24160F'; wrap(c, '“You said: orange powder under the leaves, leaves falling. Is that right?”', 18, 40, w - 36, 23); }],
+      [200, 90, (c) => { eyebrow(c, 'Noor', 18, 16); c.font = F(800, 26); c.fillStyle = '#4F6B0C'; c.fillText('“Haan.” ✓', 18, 40); }],
+    ];
+    const cards = defs.map(([w, h, d], i) => {
+      const cd = card(w, h, d); cd.rotation.y = CARD_YAW;
+      const pos = [[-3.8, 2.7, -1.2], [.6, 3.7, -2.2], [-.9, 1.6, 1], [3.6, 2.1, .4]][i];
+      cd.userData.base = new THREE.Vector3(...pos); g.add(cd); return cd;
+    });
+    tag(3, g, [-4.6, 1.9, 2.2], '', 'Her voice', 'Transcribed in Hindi');
+    return (t, lt) => {
+      bars.forEach((b, i) => { const h = .15 + Math.abs(Math.sin(t * 4 + i * .55) * Math.sin(t * 1.7 + i * .2)) * 1.1; b.scale.y = h; b.position.y = .5 + h / 2; });
+      const cyc = lt % 10.5;
+      cards.forEach((cd, i) => {
+        const s = back((cyc - 1.6 - i * 1.5) / .6) * (cyc > 9.9 ? 1 - ease((cyc - 9.9) / .5) : 1);
+        cd.scale.setScalar(Math.max(s, .001));
+        cd.position.copy(cd.userData.base); cd.position.y += Math.sin(t * 1.2 + i) * .06;
+      });
+    };
+  }
+});
+
+station({
+  key: 'know', short: 'Know', eyebrow: 'Step 3 · Context',
+  title: 'It knows <em>her field.</em>',
+  text: 'Altitude, this week’s weather and what neighbours report. Same words, different field, different answer.',
+  chip: 'Location + weather + neighbours', dist: 23, look: [0, 1.9, 0], yaw: -.08,
+  notes: 'The caller ID links to her plot in the cooperative\'s farmer registry. So the system knows the altitude, this week\'s weather from open data, and what nearby farmers have reported. Rust likes warm, wet lower slopes; blight likes cool, windy slopes. The numbers shown are an example.',
+  build(g) {
+    g.add(platform(13, 8));
+    const cols = [C.tan, C.tan2, 0xC9A983, 0xA97E5A, C.soil];
+    for (let x = 0; x < 9; x++) for (let z = 0; z < 6; z++) {
+      const h = .15 + Math.max(0, 1.6 - Math.hypot(x - 5.5, (z - 2) * 1.2) * .45) + Math.sin(x * 1.3 + z) * .06;
+      const band = Math.min(cols.length - 1, Math.floor(h * 2.4));
+      g.add(mesh(rbox(.94, h, .94, .06), mat(cols[band], .85), -5.6 + x, .52 + h / 2, -2.4 + z));
+    }
+    const noorPin = pin(C.orange, 1.3); noorPin.position.set(-.1, 2.05, -.2); g.add(noorPin);
+    const neighbours = [[-3.6, .9, 1.5], [-2.5, 1.05, -1.6], [1.4, 1.3, 1.6]].map(p => {
+      const pn = pin(C.esp, .9); pn.position.set(...p); g.add(pn);
+      const r = ring(C.orange, .3); r.position.set(p[0], p[1] + .02, p[2]); g.add(r);
+      return r;
+    });
+    const cloud = cloudMesh(); cloud.position.set(-2.2, 4.3, -.6); g.add(cloud);
+    const drops = Array.from({ length: 22 }, (_, i) => {
+      const d = mesh(new THREE.CylinderGeometry(.025, .025, .22, 5), mat(C.rain, .3));
+      d.userData = { x: -3 + ((i * 37) % 18) / 10, z: -1.1 + ((i * 53) % 10) / 10, o: (i * .618) % 1 };
+      g.add(d); return d;
+    });
+    const info = card(300, 196, (c) => {
+      eyebrow(c, 'Plot context · example', 18, 16);
+      const rows = [['Altitude', '1,700 m'], ['Rain', '5 of last 7 days'], ['Temperature', '19–24 °C'], ['Neighbours', '3 report rust']];
+      rows.forEach(([k, v], i) => {
+        const y = 46 + i * 36; c.fillStyle = '#F0E8DC'; c.fillRect(18, y + 28, 264, 1);
+        c.font = F(500, 15); c.fillStyle = '#8A7767'; c.fillText(k, 18, y + 4);
+        c.font = F(700, 15); c.fillStyle = i === 3 ? '#4F6B0C' : '#24160F'; c.textAlign = 'right'; c.fillText(v, 282, y + 4); c.textAlign = 'left';
+      });
+    });
+    info.position.set(4.3, 2.6, -1.8); info.rotation.y = CARD_YAW; g.add(info);
+    tag(4, g, [-.1, 3, -.2], '', "Noor's plot", 'From the farmer registry');
+    tag(4, g, [-2.2, 5.3, -.6], '', 'Weather', 'Open data');
+    return (t) => {
+      neighbours.forEach((r, i) => { const p = ((t * .6) + i * .33) % 1; r.scale.setScalar(1 + p * 3); r.material.opacity = 1 - p; });
+      drops.forEach(d => { const p = ((t * .9) + d.userData.o) % 1; d.position.set(d.userData.x, 4 - p * 2.6, d.userData.z); });
+      cloud.position.x = -2.2 + Math.sin(t * .4) * .25;
+      noorPin.position.y = 2.05 + Math.sin(t * 2) * .08;
+    };
+  }
+});
+
+station({
+  key: 'answer', short: 'Answer', eyebrow: 'Step 4 · Answer',
+  title: 'One safe next step, <em>during the call.</em>',
+  text: 'Symptoms plus context are ranked against a crop disease base. The answer comes from an expert-reviewed list, plus an SMS summary.',
+  chip: 'Instant · reviewed · SMS', dist: 21, look: [0, 1.6, 0], yaw: .1,
+  notes: 'The matching engine ranks likely diseases using the confirmed symptoms and the plot context. It never writes free text: it picks an answer from a fixed list reviewed by experts. Noor hears it during the call and gets an SMS summary. Scores shown are an example.',
+  build(g) {
+    g.add(platform(12.5, 7.5));
+    const scores = [['Leaf rust', .82, C.orange], ['Leaf blight', .1, C.esp2], ['Leaf spot', .08, C.esp2]];
+    const bars = scores.map(([, v, col], i) => {
+      const b = mesh(rbox(.7, 1, .7, .08), mat(col, .45), -4.6 + i * 1.05, .5, .3); g.add(b); b.userData.v = v; return b;
+    });
+    const legend = card(250, 120, (c) => {
+      eyebrow(c, 'Likely cause · example', 18, 16);
+      scores.forEach(([n, v], i) => { c.font = F(i ? 500 : 700, 14); c.fillStyle = i ? '#8A7767' : '#24160F'; c.fillText(n, 18, 44 + i * 22); c.textAlign = 'right'; c.fillText(Math.round(v * 100) + '%', 232, 44 + i * 22); c.textAlign = 'left'; });
+    });
+    legend.position.set(-3.6, 4.3, -1.2); legend.rotation.y = CARD_YAW; g.add(legend);
+    for (let i = 0; i < 7; i++) g.add(mesh(rbox(1.6, .08, 1.1, .04), mat(i === 6 ? C.orange : C.white, .5), -1.6 + (i % 2) * .05, .58 + i * .1, -2.6));
+    const answer = card(330, 196, (c, w) => {
+      eyebrow(c, 'Answer · expert-reviewed', 18, 16);
+      c.font = F(800, 22); c.fillStyle = '#24160F'; c.fillText('Likely leaf rust.', 18, 40);
+      c.font = F(500, 15); c.fillStyle = '#5C4A3E'; wrap(c, 'Collect and bury fallen leaves. Your extension officer will call you about spraying.', 18, 74, w - 36, 21);
+      chip(c, 'SMS SENT', 18, 154, '#B9E52F', '#24160F');
+    });
+    answer.position.set(1.4, 2.5, .7); answer.rotation.y = CARD_YAW; g.add(answer);
+    const phone = featurePhone(.75); phone.position.set(4.6, .5, .6); phone.rotation.y = -.2; g.add(phone);
+    const sms = envelope(); g.add(sms);
+    const path = new THREE.QuadraticBezierCurve3(new THREE.Vector3(3, 2.9, .8), new THREE.Vector3(4.2, 4, .8), new THREE.Vector3(4.6, 2.1, .7));
+    tag(5, g, [-1.6, 1.6, -2.6], '', 'Reviewed answers', 'Fixed list, no free text');
+    return (t, lt) => {
+      bars.forEach((b, i) => { const h = .1 + b.userData.v * 3 * ease((lt - 1.2 - i * .25) / 1.2); b.scale.y = h; b.position.y = .5 + h / 2; });
+      const a = back((lt - 2.2) / .7); answer.scale.setScalar(Math.max(a, .001));
+      answer.position.y = 2.5 + Math.sin(t * 1.1) * .06;
+      const p = ((lt - 3) % 3.2) / 1.6;
+      sms.visible = lt > 3 && p <= 1;
+      if (sms.visible) { sms.position.copy(path.getPoint(ease(p))); sms.rotation.y = CARD_YAW; }
+    };
+  }
+});
+
+station({
+  key: 'guard', short: 'Guardrails', eyebrow: 'Responsible AI',
+  title: 'When in doubt, <em>a person decides.</em>',
+  text: 'Read-back first. Only approved answers. If the system is not sure, the extension officer calls her back.',
+  chip: 'Pass / fail criterion', dist: 21, look: [0, 1.5, 0], yaw: -.1,
+  notes: 'Three guardrails: the read-back, so no advice is given until Noor confirms what the system heard; a fixed list of answers reviewed by experts, so nothing is generated freely; and an explicit "not sure, ask a person" path. It never tells her to buy or spray. Privacy: consent at registration, data never sold, audio deleted after transcription, neighbour reports only as counts per area.',
+  build(g) {
+    g.add(platform(12.5, 7.5));
+    const gauge = new THREE.Group();
+    [[C.orange, 0, .33], [0xE9C9A0, .33, .66], [C.esp2, .66, 1]].forEach(([col, a, b]) => {
+      const m = mesh(new THREE.TorusGeometry(1.2, .16, 12, 48, Math.PI * (b - a)), mat(col, .45));
+      m.rotation.z = Math.PI * a; gauge.add(m);
+    });
+    const needle = new THREE.Group();
+    needle.add(mesh(rbox(1.05, .08, .08, .03), mat(C.esp, .35), .5, 0, .12));
+    needle.add(mesh(new THREE.SphereGeometry(.13, 16, 12), mat(C.esp, .35), 0, 0, .12));
+    gauge.add(needle);
+    gauge.position.set(-3.3, 1.2, -.6); gauge.rotation.y = CARD_YAW; g.add(gauge);
+    const officer = person(C.esp2, 1.25); officer.position.set(3.4, .5, -.4); g.add(officer);
+    const headset = mesh(new THREE.TorusGeometry(.17, .03, 8, 24, Math.PI), mat(C.orange, .4));
+    headset.position.set(0, .86, 0); headset.rotation.y = CARD_YAW; officer.add(headset);
+    const steps = [['1', 'Checks first', 'Reads back before advising'], ['2', 'Approved answers', 'Only expert-reviewed text'], ['3', 'Not sure?', 'A person calls back']];
+    steps.forEach(([n, h, s], i) => {
+      const cd = card(230, 92, (c) => {
+        roundRect(c, 16, 16, 30, 30, 8); c.fillStyle = i === 2 ? '#B9E52F' : '#24160F'; c.fill();
+        c.font = F(700, 15, 'JetBrains Mono'); c.fillStyle = i === 2 ? '#24160F' : '#F8F3EA'; c.fillText(n, 26, 23);
+        c.font = F(800, 17); c.fillStyle = '#24160F'; c.fillText(h, 58, 18);
+        c.font = F(500, 13); c.fillStyle = '#8A7767'; c.fillText(s, 58, 44);
+      });
+      cd.position.set(-.6 + i * .2, 1.2 + i * 1.05, 1.6 - i * 1.1); cd.rotation.y = CARD_YAW; g.add(cd);
+    });
+    const callBack = new THREE.Line(new THREE.BufferGeometry().setFromPoints(new THREE.QuadraticBezierCurve3(new THREE.Vector3(-2.2, 1.4, -.6), new THREE.Vector3(.5, 4.4, -1.6), new THREE.Vector3(3.4, 2.4, -.4)).getPoints(40)), new THREE.LineDashedMaterial({ color: C.orange, dashSize: .16, gapSize: .12, transparent: true }));
+    callBack.computeLineDistances(); g.add(callBack);
+    tag(6, g, [-3.3, 2.7, -.6], '', 'Confidence', 'Low → hand over');
+    tag(6, g, [3.4, 2.3, -.4], '', 'Extension officer', 'Calls Noor back');
+    return (t) => {
+      const v = .5 + Math.sin(t * .8) * .45;
+      needle.rotation.z = Math.PI * (1 - v);
+      callBack.material.opacity = v < .35 ? 1 : .25;
+      officer.rotation.y = Math.sin(t) * .15;
+    };
+  }
+});
+
+station({
+  key: 'impact', short: 'Impact', eyebrow: 'Impact',
+  title: 'Every call is an <em>early warning.</em>',
+  text: 'Confirmed reports cluster by area and week, so rare officer visits go where the outbreak is. Counts per area, never names.',
+  chip: 'For Noor + for the officer', dist: 23, look: [0, 1, 0], yaw: .08,
+  notes: 'Confirmed symptoms from calls, with plot locations, are clustered by area and week. When several farmers in one area report the same thing, the officer gets an alert. Noor hears "farmers near you report the same". Reports are anonymous: counts per area, never names.',
+  build(g) {
+    g.add(platform(14, 8.5));
+    const tones = [C.tan, 0xEFE4D3, C.tan2, 0xE3D2BA];
+    for (let x = 0; x < 11; x++) for (let z = 0; z < 6; z++) {
+      const h = .06 + ((x * 7 + z * 3) % 4) * .03;
+      g.add(mesh(rbox(.92, h, .92, .04), mat(tones[(x * 3 + z * 5) % 4], .9), -6 + x * 1.02, .52 + h / 2, -2.8 + z * 1.02));
+    }
+    [[-5, -1.8], [-3, 1.3], [-1.4, -2.2], [1.9, 2], [3.8, -1.2], [-4.6, 2.1]].forEach(([x, z]) => { const p = pin(C.esp2, .7); p.position.set(x, .64, z); g.add(p); });
+    const cPins = [[1.2, -.4], [2, .2], [1.5, .8], [.6, .3]].map(([x, z]) => { const p = pin(C.orange, .85); p.position.set(x, .64, z); g.add(p); return p; });
+    const rings = [0, 1].map(() => { const r = ring(C.orange, 1); r.position.set(1.35, .68, .25); g.add(r); return r; });
+    const alert = card(300, 140, (c, w) => {
+      eyebrow(c, 'Alert · this week · example', 18, 16);
+      c.font = F(800, 19); c.fillStyle = '#24160F'; wrap(c, 'Leaf rust reported by 4 farmers within 5 km.', 18, 40, w - 36, 24);
+      chip(c, 'VISIT THIS AREA FIRST', 18, 98, '#B9E52F', '#24160F');
+    });
+    alert.position.set(4.6, 2.9, -2.2); alert.rotation.y = CARD_YAW; g.add(alert);
+    const officer = person(C.esp2, 1.05); officer.position.set(4.4, .5, 3); g.add(officer);
+    const bell = new THREE.Group();
+    const pts = [[0, .0], [.2, .02], [.22, .1], [.17, .25], [.12, .38], [.03, .45], [0, .46]].map(([x, y]) => new THREE.Vector2(x, y));
+    bell.add(mesh(new THREE.LatheGeometry(pts, 24), mat(C.orange, .3)));
+    bell.add(mesh(new THREE.SphereGeometry(.05, 10, 8), mat(C.esp, .4), 0, -.03, 0));
+    bell.position.set(4.4, 2.15, 3); g.add(bell);
+    tag(7, g, [1.35, 1.9, .25], '', 'Outbreak cluster', 'Counts per area');
+    return (t) => {
+      rings.forEach((r, i) => { const p = ((t * .45) + i * .5) % 1; r.scale.setScalar(.6 + p * 2.2); r.material.opacity = 1 - p; });
+      cPins.forEach((p, i) => p.position.y = .64 + Math.abs(Math.sin(t * 2.2 + i)) * .18);
+      bell.rotation.z = Math.sin(t * 9) * .35 * (Math.sin(t * 1.5) > .3 ? 1 : 0);
+    };
+  }
+});
+
+station({
+  key: 'vision', short: 'Vision', eyebrow: 'Vision',
+  title: 'One cooperative today. <em>Any crop, any language tomorrow.</em>',
+  text: 'The engine, the read-back and the guardrails stay. Swap the speech pack for a new language, the knowledge base for a new crop.',
+  chip: 'Pilot with one cooperative', dist: 27, look: [0, 1.8, 0], yaw: -.06,
+  notes: 'We start with one cooperative that already registers its members, since a farmer registry is the precondition the brief names. In the pilot we measure time to first advice, the share of calls resolved versus routed to a person, and officer visits that hit an active outbreak.',
+  build(g) {
+    const make = (x, z, fill) => {
+      const p = platform(4.4, 4.4, C.orange); p.position.set(x, 0, z); g.add(p);
+      g.add(mesh(rbox(3.8, .2, 3.4, .08), mat(C.soil, .95), x, .62, z - .2));
+      fill(x, z);
+    };
+    make(-5, 0, (x, z) => { for (let i = 0; i < 6; i++) { const b = bush(false, .8); b.position.set(x - 1.2 + (i % 3) * 1.2, .72, z - .9 + Math.floor(i / 3) * 1.4); g.add(b); } });
+    make(0, -1, (x, z) => {
+      for (let i = 0; i < 4; i++) {
+        const tree = new THREE.Group(), tx = x - .8 + (i % 2) * 1.6, tz = z - .8 + Math.floor(i / 2) * 1.3;
+        tree.add(mesh(new THREE.CylinderGeometry(.08, .11, 1.2, 8), mat(C.soilDk, .9), 0, 1.3, 0));
+        tree.add(mesh(new THREE.IcosahedronGeometry(.6, 0), mat(C.leafDk, .85, { flatShading: true }), 0, 2.1, 0));
+        for (let k = 0; k < 3; k++) { const pod = mesh(new THREE.SphereGeometry(.11, 12, 10), mat(k % 2 ? C.orange : 0xA4521A, .45), Math.cos(k * 2) * .14, 1.1 + k * .15, Math.sin(k * 2) * .14); pod.scale.y = 1.7; tree.add(pod); }
+        tree.position.set(tx, 0, tz); g.add(tree);
+      }
+    });
+    make(5, 0, (x, z) => {
+      for (let i = 0; i < 12; i++) {
+        const stalk = new THREE.Group(), sx = x - 1.3 + (i % 4) * .85, sz = z - 1 + Math.floor(i / 4) * .9;
+        stalk.add(mesh(new THREE.CylinderGeometry(.04, .05, 1.8, 6), mat(0x8B9A5B, .8), 0, 1.6, 0));
+        const cob = mesh(new THREE.SphereGeometry(.09, 10, 8), mat(C.maize, .55), .07, 1.5, 0); cob.scale.y = 2.2; stalk.add(cob);
+        stalk.position.set(sx, 0, sz); g.add(stalk);
+      }
+    });
+    const langs = ['Hindi', 'Swahili', 'Amharic', 'Hausa', 'Spanish', 'Bahasa'];
+    const chips = langs.map((l, i) => {
+      const cd = card(128, 44, (c) => { c.fillStyle = i === 0 ? '#B9E52F' : '#24160F'; c.beginPath(); c.arc(17, 22, 4, 0, 7); c.fill(); c.font = F(800, 17); c.fillStyle = i === 0 ? '#4F6B0C' : '#24160F'; c.fillText(l, 28, 13); }, { depth: .05, scale: .0095 });
+      cd.rotation.y = CARD_YAW; g.add(cd); return cd;
+    });
+    tag(8, g, [-5, 2.2, 0], '', 'Vegetables', 'Knowledge base per crop');
+    tag(8, g, [0, 3.2, -1], '', 'Tree crops', 'New knowledge base');
+    tag(8, g, [5, 3, 0], '', 'Maize', 'New knowledge base');
+    return (t) => {
+      chips.forEach((cd, i) => {
+        const a = t * .25 + i / langs.length * Math.PI * 2;
+        cd.position.set(Math.cos(a) * 7.2, 4.4 + Math.sin(t + i) * .15, Math.sin(a) * 2.2 - 1.6);
+      });
+    };
+  }
+});
+
+station({
+  key: 'future', short: 'Next up', eyebrow: 'Future features',
+  title: 'What comes <em>next.</em>',
+  text: 'Four features on our roadmap: from a photo check we have already prototyped to an outbreak view for the whole cooperative.',
+  chip: 'Roadmap', dist: 27.5, look: [0, 2.2, 0], yaw: 0,
+  notes: 'Photo check: we already built a working prototype, a small image model (MobileNetV3-Small, about 1.2 MB) that runs offline in a smartphone browser. Our training data was limited, so it is a second opinion for farmers or officers who own a smartphone, never a replacement for the call. Weather alerts: an SMS before a wet week, when rust risk rises. Plot memory: reminders before the outbreak window her plot has had in past seasons. Officer dashboard: the outbreak map for the whole cooperative. The percentage on the phone screen is an example.',
+  build(g) {
+    g.add(platform(15, 8.5));
+    const P = [
+      { x: -5.4, z: 1, h: .35 }, { x: -1.8, z: .5, h: .75 }, { x: 1.8, z: 0, h: 1.15 }, { x: 5.4, z: -.5, h: 1.55 },
+    ];
+    const pedestals = P.map(({ x, z, h }, i) => {
+      const ped = new THREE.Group();
+      ped.add(mesh(rbox(2.6, h, 2.6, .18), mat(i === 0 ? C.esp : C.white, .5), 0, .5 + h / 2, 0));
+      ped.add(mesh(new THREE.BoxGeometry(1.9, .015, .07), mat(C.orange, .4), 0, .5 + h + .008, 1.05));
+      const num = new THREE.Mesh(new THREE.PlaneGeometry(.9, .32), new THREE.MeshBasicMaterial({ map: texCanvas(90, 32, (c) => { c.font = F(700, 20, 'JetBrains Mono'); c.fillStyle = i === 0 ? '#F2B36B' : '#A3907E'; c.fillText('0' + (i + 1), 2, 6); }), transparent: true, toneMapped: false }));
+      num.position.set(-.75, .5 + h / 2, 1.302); ped.add(num);
+      ped.position.set(x, 0, z); g.add(ped);
+      return ped;
+    });
+    const top = i => .5 + P[i].h;
+
+    // 1 · smartphone with photo check
+    const phone = new THREE.Group();
+    phone.add(mesh(rbox(.95, 1.8, .12, .14), mat(C.esp, .3), 0, .9, 0));
+    const scr = card(200, 360, (c, w, h) => {
+      c.fillStyle = '#F8F3EA'; c.fillRect(0, 0, w, h);
+      const gr = c.createLinearGradient(0, 30, 0, 230); gr.addColorStop(0, '#6F8F5C'); gr.addColorStop(1, '#4A6640');
+      roundRect(c, 14, 30, w - 28, 200, 12); c.fillStyle = gr; c.fill();
+      c.save(); c.translate(w / 2, 130); c.rotate(-.5);
+      c.beginPath(); c.ellipse(0, 0, 44, 78, 0, 0, Math.PI * 2); c.fillStyle = '#7FA36A'; c.fill();
+      c.strokeStyle = '#4A6640'; c.lineWidth = 3; c.beginPath(); c.moveTo(0, -72); c.lineTo(0, 72); c.stroke();
+      [[-14, -20, 9], [16, 8, 11], [-10, 30, 8], [12, -40, 7]].forEach(([x, y, r]) => { c.beginPath(); c.arc(x, y, r, 0, 7); c.fillStyle = '#E0782A'; c.fill(); });
+      c.restore();
+      c.strokeStyle = '#F2B36B'; c.lineWidth = 3; roundRect(c, 40, 60, w - 80, 140, 10); c.stroke();
+      c.font = F(700, 12, 'JetBrains Mono'); c.fillStyle = '#8A7767'; c.fillText('PHOTO CHECK · EXAMPLE', 16, 246);
+      c.font = F(800, 26); c.fillStyle = '#24160F'; c.fillText('Leaf rust', 16, 266);
+      roundRect(c, 16, 306, w - 32, 10, 5); c.fillStyle = '#EDE3D4'; c.fill();
+      roundRect(c, 16, 306, (w - 32) * .87, 10, 5); c.fillStyle = '#B9E52F'; c.fill();
+      c.font = F(700, 14, 'JetBrains Mono'); c.fillStyle = '#4F6B0C'; c.fillText('87%', w - 52, 326);
+    }, { scale: .0041, depth: .01, bg: '#F8F3EA' });
+    scr.position.set(0, .9, .066); phone.add(scr);
+    phone.scale.setScalar(1.3); phone.position.set(P[0].x, top(0), P[0].z); phone.rotation.set(-.08, CARD_YAW - .25, 0); g.add(phone);
+
+    // 2 · weather alert by SMS
+    const wx = new THREE.Group();
+    const cl = cloudMesh(.62); cl.position.set(0, 1.55, 0); wx.add(cl);
+    const drops = Array.from({ length: 8 }, (_, i) => { const d = mesh(new THREE.CylinderGeometry(.022, .022, .18, 5), mat(C.rain, .3)); d.userData.o = i / 8; d.userData.x = -.35 + (i % 4) * .23; wx.add(d); return d; });
+    const env = envelope(); env.scale.setScalar(1.25); wx.add(env);
+    wx.position.set(P[1].x, top(1), P[1].z); g.add(wx);
+
+    // 3 · plot memory: calendar + clock ring
+    const mem = new THREE.Group();
+    const calc = card(150, 150, (c) => {
+      c.fillStyle = '#24160F'; roundRect(c, 0, 0, 150, 34, [16, 16, 0, 0]); c.fill();
+      c.font = F(700, 12, 'JetBrains Mono'); c.fillStyle = '#F2B36B'; c.fillText('MAR · REMINDER', 14, 11);
+      for (let i = 0; i < 20; i++) {
+        const x = 14 + (i % 5) * 25, y = 46 + Math.floor(i / 5) * 24, on = i === 12;
+        roundRect(c, x, y, 20, 18, 4); c.fillStyle = on ? '#B9E52F' : '#F3ECE2'; c.fill();
+      }
+    });
+    calc.position.set(-.25, .95, 0); calc.rotation.y = CARD_YAW; mem.add(calc);
+    const clockRing = new THREE.Group();
+    clockRing.add(mesh(new THREE.TorusGeometry(.42, .07, 12, 40), mat(C.orange, .4)));
+    clockRing.add(mesh(new THREE.CylinderGeometry(.38, .38, .04, 32), mat(C.white, .5)).rotateX(Math.PI / 2));
+    const hand = mesh(rbox(.05, .3, .05, .02), mat(C.esp, .4), 0, .13, .04); clockRing.add(hand);
+    clockRing.position.set(.62, 1.45, .35); clockRing.rotation.y = CARD_YAW; mem.add(clockRing);
+    mem.position.set(P[2].x, top(2), P[2].z); g.add(mem);
+
+    // 4 · officer dashboard monitor
+    const mon = new THREE.Group();
+    mon.add(mesh(new THREE.CylinderGeometry(.06, .08, .55, 12), mat(C.steel, .35), 0, .28, 0));
+    mon.add(mesh(rbox(.7, .06, .45, .03), mat(C.steel, .35), 0, .03, 0));
+    mon.add(mesh(rbox(1.9, 1.2, .1, .08), mat(C.esp, .3), 0, 1.1, 0));
+    const dash = card(300, 180, (c, w) => {
+      c.fillStyle = '#FBF8F3'; c.fillRect(0, 0, w, 180);
+      c.font = F(700, 11, 'JetBrains Mono'); c.fillStyle = '#8A7767'; c.fillText('COOPERATIVE · OUTBREAKS', 14, 12);
+      for (let x = 0; x < 7; x++) for (let y = 0; y < 5; y++) { roundRect(c, 14 + x * 19, 34 + y * 26, 16, 22, 3); c.fillStyle = ['#EFE4D3', '#E7D8C3', '#E3D2BA'][(x + y * 2) % 3]; c.fill(); }
+      [[4, 1], [5, 2], [4, 2]].forEach(([x, y]) => { c.beginPath(); c.arc(22 + x * 19, 45 + y * 26, 6, 0, 7); c.fillStyle = '#B9E52F'; c.fill(); });
+      [10, 18, 14, 30, 46, 62].forEach((v, i) => { roundRect(c, 164 + i * 21, 160 - v * 1.9, 14, v * 1.9, 3); c.fillStyle = i > 3 ? '#B9E52F' : '#3D2A1F'; c.fill(); });
+      c.fillStyle = '#E6DED2'; c.fillRect(160, 162, 128, 1);
+    }, { scale: .006, depth: .01, bg: '#FBF8F3' });
+    dash.position.set(0, 1.1, .056); mon.add(dash);
+    mon.position.set(P[3].x, top(3), P[3].z); mon.rotation.y = CARD_YAW - .2; g.add(mon);
+
+    const feats = [
+      ['Photo check', 'Snap a leaf, get a second opinion.', 'PROTOTYPE BUILT', true],
+      ['Weather alerts', 'An SMS before a wet week: check for rust.', 'NEXT', false],
+      ['Plot memory', 'Reminders before her usual outbreak window.', 'NEXT', false],
+      ['Officer dashboard', 'Outbreak map for the whole cooperative.', 'LATER', false],
+    ];
+    const fcards = feats.map(([h, s, st, built], i) => {
+      const cd = card(236, 152, (c, w) => {
+        eyebrow(c, 'Feature 0' + (i + 1), 16, 14);
+        c.font = F(800, 20); c.fillStyle = '#24160F'; c.fillText(h, 16, 36);
+        c.font = F(500, 14); c.fillStyle = '#5C4A3E'; wrap(c, s, 16, 62, w - 32, 19);
+        chip(c, st, 16, 112, built ? '#B9E52F' : '#24160F', built ? '#24160F' : '#F8F3EA');
+      });
+      cd.rotation.y = CARD_YAW; cd.userData.base = new THREE.Vector3(P[i].x, top(i) + 3.4, P[i].z - .2);
+      g.add(cd); return cd;
+    });
+    const hl = ring(C.orange, 1.75, .04); g.add(hl);
+    const hl2 = ring(C.orange, 1.75, .02); g.add(hl2);
+    return (t, lt) => {
+      const k = Math.floor(Math.max(lt - 1.5, 0) / 2.4) % 4, f = (Math.max(lt - 1.5, 0) % 2.4) / 2.4;
+      fcards.forEach((cd, i) => {
+        const s = back((lt - 1.6 - i * .35) / .6);
+        cd.scale.setScalar(Math.max(s, .001) * (i === k ? 1.06 : 1));
+        cd.position.copy(cd.userData.base); cd.position.y += Math.sin(t * 1.1 + i * .8) * .07 + (i === k ? .12 : 0);
+      });
+      const target = new THREE.Vector3(P[k].x, .52, P[k].z);
+      hl.position.lerp(target, .12); hl.position.y = .53;
+      hl2.position.copy(hl.position); hl2.scale.setScalar(1 + f * .35); hl2.material.opacity = 1 - f;
+      pedestals.forEach((p, i) => { p.position.y += ((i === k ? .08 : 0) - p.position.y) * .1; });
+      drops.forEach(d => { const p = (t * .9 + d.userData.o) % 1; d.position.set(d.userData.x, 1.25 - p * .7, 0); });
+      env.position.set(.05, .55 + Math.sin(t * 2) * .08, .35); env.rotation.y = CARD_YAW + Math.sin(t) * .15;
+      hand.parent.rotation.z = 0; hand.position.set(Math.sin(t) * .13, Math.cos(t) * .13, .04); hand.rotation.z = -t;
+      phone.rotation.y = CARD_YAW - .25 + Math.sin(t * .6) * .08;
+    };
+  }
+});
+
+
+/* ---------- layout, decals, build-in wrappers ---------- */
+const SPACING = 19;
+const decalTex = (num, name) => texCanvas(320, 40, (c) => {
+  c.font = F(700, 22, 'JetBrains Mono'); c.fillStyle = '#F3E6CF'; c.fillText(num, 0, 9);
+  c.fillStyle = '#D8C3A3'; c.letterSpacing = '2px'; c.fillText(name.toUpperCase(), 44, 9); c.letterSpacing = '0px';
+});
+S.forEach((s, i) => {
+  s.pos = new THREE.Vector3(i * SPACING, 0, Math.sin(i * 1.15) * 5);
+  s.group.position.copy(s.pos);
+  s.update = s.build(s.group);
+  const pieces = [...s.group.children];
+  s.pieces = pieces.map((c, k) => {
+    const w = new THREE.Group();
+    s.group.remove(c); w.add(c); s.group.add(w);
+    return { w, isBase: !!c.userData.platform, delay: c.userData.platform ? 0 : .25 + (k / pieces.length) * 1.3 };
+  });
+  const base = pieces.find(c => c.userData.platform);
+  if (base) {
+    const { w, d } = base.userData.platform;
+    const dec = new THREE.Mesh(new THREE.PlaneGeometry(3.2, .4), new THREE.MeshBasicMaterial({ map: decalTex(String(i + 1).padStart(2, '0'), s.short), transparent: true, toneMapped: false }));
+    dec.position.set(-w / 2 + 2.1, .26, d / 2 + .004); base.add(dec);
+  }
+  s.builtAt = null;
+  s.group.updateMatrixWorld(true);
+  scene.add(s.group);
+});
+function applyBuild(s, t) {
+  const bt = s.builtAt === null ? null : t - s.builtAt;
+  for (const p of s.pieces) {
+    if (p.isBase) { p.w.position.y = 0; continue; }
+    if (bt === null) { p.w.visible = false; continue; }
+    const k = reduceMotion ? 1 : clamp01((bt - p.delay) / .75);
+    p.w.visible = k > 0;
+    p.w.position.y = (1 - back(k)) * 1.8;
+    p.w.scale.setScalar(Math.max(.001, .4 + .6 * ease(k * 1.4)));
+  }
+}
+
+const pathPts = [];
+S.forEach((s, i) => {
+  if (i === 0) pathPts.push(s.pos.clone().add(new THREE.Vector3(-14, 0, 0)));
+  pathPts.push(s.pos.clone().add(new THREE.Vector3(0, 0, 5.4)));
+  if (i === S.length - 1) pathPts.push(s.pos.clone().add(new THREE.Vector3(14, 0, 5.4)));
+});
+const roadCurve = new THREE.CatmullRomCurve3(pathPts.map(p => p.setY(.03)));
+const roadLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(roadCurve.getPoints(800)), new THREE.LineDashedMaterial({ color: 0x3E4A18, dashSize: .35, gapSize: .25 }));
+roadLine.computeLineDistances(); scene.add(roadLine);
+const packets = Array.from({ length: 30 }, (_, i) => { const m = mesh(new THREE.SphereGeometry(.12, 12, 10), mat(i % 4 ? C.esp2 : C.orange, .4)); m.userData.o = i / 30; scene.add(m); return m; });
+
+/* ---------------- Noor's phone (LCD widget) ---------------- */
+const LW = 96, LH = 64;
+const lcdC = document.createElement('canvas'); lcdC.width = LW; lcdC.height = LH;
+const L = lcdC.getContext('2d', { willReadFrequently: true });
+const lcdOut = $('#lcd'), LO = lcdOut.getContext('2d'), CW = lcdOut.width / LW;
+const lcdBg = (() => { const g = LO.createRadialGradient(lcdOut.width / 2, lcdOut.height / 2, 10, lcdOut.width / 2, lcdOut.height / 2, lcdOut.width * .62); g.addColorStop(0, '#CDF542'); g.addColorStop(1, '#8FB21C'); return g; })();
+let lcdFlick = 0;
+/* ---------------- LCD screens ---------------- */
+function T(s, x, y, size = 8, align = 'left') { L.font = `${size}px Silkscreen`; L.textAlign = align; L.textBaseline = 'top'; L.fillText(s, x, y); }
+function W(s, size = 8) { L.font = `${size}px Silkscreen`; return L.measureText(s).width; }
+function fitT(s, y, max = 92) { T(s, 48, y, W(s, 16) <= max ? 16 : 8, 'center'); }
+let listenP = 0, scrollP = 0;
+function status(bars = 4) {
+  for (let i = 0; i < bars; i++) L.fillRect(1 + i * 3, 6 - (i + 1), 2, i + 1);
+  L.fillRect(83, 1, 11, 5); L.clearRect(84, 2, 9, 3); L.fillRect(85, 3, Math.round(7 * (.35 + .65 * scrollP)), 1); L.fillRect(94, 2, 1, 3);
+}
+function inverted(fn) { L.globalCompositeOperation = 'destination-out'; fn(); L.globalCompositeOperation = 'source-over'; }
+function title(s) { L.fillRect(0, 9, 96, 10); inverted(() => T(s, 48, 10, 8, 'center')); }
+function invRow(s, y) { L.fillRect(0, y - 1, 96, 10); inverted(() => T(s, 3, y)); }
+function softKeys(a, b) { if (a) T(a, 2, 55); if (b) T(b, 94, 55, 8, 'right'); }
+const mm2 = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+const SCREENS = {
+  boot() { status(); fitT('SMALL', 12); fitT('TALK,', 27); T('BIG HARVEST', 48, 43, 8, 'center'); softKeys('MENU', 'CALL'); },
+  noor() { status(2); title('NOOR'); T('CALLS', 3, 22); T('YES', 93, 22, 8, 'right'); T('SMS', 3, 32); T('YES', 93, 32, 8, 'right'); T('DATA', 3, 42); T('NONE', 93, 42, 8, 'right'); softKeys('BACK', 'OK'); },
+  problem(t) { status(1); title('INBOX'); T('NO NEW', 48, 22, 8, 'center'); T('MESSAGES', 48, 31, 8, 'center'); if ((t * 2 | 0) % 2) T('NEXT VISIT?', 48, 44, 8, 'center'); softKeys('BACK', ''); },
+  call(t) { status(); T('CALLING' + '...'.slice(0, (t * 3 | 0) % 4), 6, 11); fitT('HOTLINE', 23); T(mm2(4 + t % 60), 48, 42, 8, 'center'); softKeys('', 'END'); },
+  listen(t) {
+    status();
+    if (listenP < .6) {
+      title('LISTENING');
+      for (let i = 0; i < 22; i++) { const h = 2 + Math.abs(Math.sin(t * 7 + i * .9) * Math.sin(t * 2.3 + i * .35)) * 14; L.fillRect(4 + i * 4, Math.round(37 - h / 2), 2, h | 0); }
+      T('HINDI', 48, 47, 8, 'center');
+    } else {
+      title('YOU SAID:'); T('ORANGE POWDER', 3, 22); T('UNDER LEAF', 3, 31); T('LEAVES FALL', 3, 40);
+      if (listenP > .86) { L.fillRect(0, 53, 40, 11); inverted(() => T('1 HAAN', 2, 55)); T('2 NAHIN', 94, 55, 8, 'right'); }
+      else softKeys('1 HAAN', '2 NAHIN');
+    }
+  },
+  know() { status(); title('MY PLOT'); T('ALT', 3, 22); T('1700M', 93, 22, 8, 'right'); T('RAIN', 3, 31); T('5/7 D', 93, 31, 8, 'right'); invRow('NEAR: 3 RUST', 42); softKeys('', 'EXAMPLE'); },
+  answer(t) {
+    status(); title('1 NEW SMS');
+    L.fillRect(40, 22, 16, 1); L.fillRect(40, 31, 16, 1); L.fillRect(40, 22, 1, 10); L.fillRect(55, 22, 1, 10);
+    for (let i = 0; i < 7; i++) { L.fillRect(41 + i, 23 + (i * .6 | 0), 1, 1); L.fillRect(54 - i, 23 + (i * .6 | 0), 1, 1); }
+    const msg = 'LIKELY LEAF RUST. COLLECT AND BURY FALLEN LEAVES. YOUR OFFICER WILL CALL.   ';
+    const w = W(msg), off = Math.round((t * 22) % w); T(msg + msg, 3 - off, 40);
+    softKeys('READ', 'BACK');
+  },
+  guard(t) { status(); fitT('NOT SURE?', 12); T('OFFICER WILL', 48, 30, 8, 'center'); T('CALL YOU BACK', 48, 39, 8, 'center'); if ((t * 2 | 0) % 2) L.fillRect(44, 51, 8, 2); },
+  impact(t) { status(); if ((t * 2.5 | 0) % 2) title('! ALERT !'); else T('! ALERT !', 48, 10, 8, 'center'); T('4 REPORTS', 48, 24, 8, 'center'); T('WITHIN 5 KM', 48, 33, 8, 'center'); T('THIS WEEK', 48, 42, 8, 'center'); softKeys('', 'EXAMPLE'); },
+  vision(t) { const G = ['NAMASTE', 'HABARI', 'SELAM', 'SANNU', 'HOLA', 'HALO'], N = ['HINDI', 'SWAHILI', 'AMHARIC', 'HAUSA', 'SPANISH', 'BAHASA']; const i = (t / .9 | 0) % 6; status(); fitT(G[i], 18); T(N[i], 48, 38, 8, 'center'); },
+  next(t) { status(); title('COMING SOON'); const it = ['PHOTO CHECK', 'WEATHER SMS', 'PLOT MEMORY', 'DASHBOARD'], s = (t / 1.2 | 0) % 4; it.forEach((x, i) => i === s ? invRow(x, 22 + i * 10) : T(x, 3, 22 + i * 10)); },
+  end() { status(0); fitT('DHANYAVAAD', 12); T('CALL ENDED', 48, 33, 8, 'center'); T('02:06', 48, 43, 8, 'center'); },
+};
+const SCR = ['boot', 'problem', 'call', 'listen', 'know', 'answer', 'guard', 'impact', 'vision', 'next', 'end'];
+let screen = 'boot';
+const sections = $$('main .ch');
+const outer = s => s.parentElement.classList.contains('pin-spacer') ? s.parentElement : s;
+let tops = [];
+function measure() { tops = sections.map(s => outer(s).getBoundingClientRect().top + scrollY); }
+
+/* ---------------- scroll + text ---------------- */
+const lenis = REDUCE ? null : new Lenis({ lerp: .09, wheelMultiplier: .9 });
+if (lenis) { lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t => lenis.raf(t * 1000)); }
+gsap.ticker.lagSmoothing(0);
+function scrollToSection(i, immediate) {
+  const y = outer(sections[i]).getBoundingClientRect().top + scrollY;
+  if (lenis) { lenis.resize(); lenis.scrollTo(y, { immediate, force: true, duration: 1.6, easing: t => 1 - Math.pow(1 - t, 4) }); }
+  else scrollTo({ top: y, behavior: immediate ? 'instant' : 'smooth' });
+}
+
+const rail = $('#rail');
+sections.forEach((s, i) => {
+  const li = document.createElement('li');
+  li.innerHTML = `<button type="button" aria-label="${s.dataset.label}"><span class="d">${s.dataset.key}</span><span class="n">${s.dataset.label}</span></button>`;
+  li.firstChild.addEventListener('click', () => { tone(s.dataset.key); pressKey(s.dataset.key); scrollToSection(i); });
+  rail.appendChild(li);
+});
+$$('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); scrollToSection(+a.dataset.go); }));
+
+const PX = {
+  leaf: ['............', '.......####.', '.....######.', '....#######.', '...####.###.', '...###.####.', '..###.#####.', '..##.######.', '..#.######..', '.#.#####....', '#...........', '............'],
+  rain: ['............', '....####....', '..########..', '.##########.', '############', '############', '.##########.', '............', '..#..#..#...', '.#..#..#....', '#..#..#.....', '............'],
+  cal: ['..#.....#...', '############', '#..........#', '############', '#..........#', '#.##.##.##.#', '#..........#', '#.##.##.##.#', '#..........#', '#.##.##....#', '#..........#', '############'],
+  map: ['............', '........###.', '.......#####', '.......##.##', '........###.', '.........#..', '.#..........', '.#...#......', '.#...#..#...', '.#.#.#..#.#.', '.#.#.#.##.#.', '############'],
+};
+$$('[data-px]').forEach(el => {
+  let r = '';
+  PX[el.dataset.px].forEach((row, y) => [...row].forEach((c, x) => { if (c === '#') r += `<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`; }));
+  el.innerHTML = `<svg viewBox="0 0 12 12" fill="${el.closest('.hot') ? '#C6F432' : '#8E917C'}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+});
+$$('.cells').forEach(c => { for (let i = 0; i < 25; i++) c.appendChild(document.createElement('i')); });
+
+const GLY = '#%&@*+=<>/\\|01';
+function decode(el) {
+  const final = el.textContent, n = final.length;
+  el.textContent = '';
+  const a = document.createElement('span'), b = document.createElement('span'), c = document.createElement('span');
+  b.style.color = 'var(--lime)'; c.style.visibility = 'hidden'; el.append(a, b, c);
+  const o = { p: 0 };
+  gsap.to(o, { p: 1, duration: Math.min(1.5, .4 + n * .01), ease: 'power1.out', onUpdate() {
+    const k = Math.floor(o.p * n), e = Math.min(n, k + 10);
+    a.textContent = final.slice(0, k);
+    let s = ''; for (let i = k; i < e; i++) s += final[i] === ' ' ? ' ' : GLY[(Math.random() * GLY.length) | 0];
+    b.textContent = s; c.textContent = final.slice(e);
+  }, onComplete() { el.textContent = final; } });
+}
+function countUp(el) { const v = +el.dataset.count, o = { v: 0 }; gsap.to(o, { v, duration: 1.4, ease: 'expo.out', onUpdate() { el.textContent = Math.round(o.v).toLocaleString('en-US'); } }); }
+const fillCells = c => [...c.children].forEach((x, i) => i < Math.round(+c.dataset.v / 4) && x.classList.add('on'));
+
+function setupText() {
+  const heroH = $('.hero h1');
+  $$('.split').forEach(el => {
+    SplitText.create(el, { type: 'chars,words', autoSplit: true, onSplit(self) {
+      if (REDUCE) return;
+      const tw = { yPercent: 70, rotateX: -85, opacity: 0, transformOrigin: '50% 100%', stagger: .018, duration: 1, ease: 'expo.out' };
+      if (el === heroH) return gsap.from(self.chars, { ...tw, delay: SHOT ? 0 : .35, duration: SHOT ? .01 : 1.1 });
+      return gsap.from(self.chars, { ...tw, scrollTrigger: { trigger: el, start: 'top 86%', toggleActions: 'play none none reverse' } });
+    } });
+  });
+  if (REDUCE || SHOT) { $$('.cells').forEach(fillCells); return; }
+  $$('.dec').forEach(el => ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => decode(el) }));
+  $$('[data-count]').forEach(el => ScrollTrigger.create({ trigger: el, start: 'top 92%', once: true, onEnter: () => countUp(el) }));
+  $$('.cells').forEach(c => {
+    const on = Math.round(+c.dataset.v / 4);
+    ScrollTrigger.create({ trigger: c, start: 'top 90%', once: true, onEnter: () => [...c.children].forEach((x, i) => i < on && gsap.delayedCall(i * .035, () => x.classList.add('on'))) });
+  });
+  $$('.keys .key, .stat, .probs>div, .fix, .months span, .alert, .ans, .read div, .two div, .crops span, .spec span').forEach(el => {
+    gsap.from(el, { y: 34, opacity: 0, duration: .8, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 94%', toggleActions: 'play none none reverse' } });
+  });
+}
+
+const mm = gsap.matchMedia();
+mm.add({ big: '(min-width: 761px) and (min-height: 620px)', motion: '(prefers-reduced-motion: no-preference)' }, ctx => {
+  const { big, motion } = ctx.conditions;
+  const sw = SplitText.create('#c03 .sw', { type: 'words' });
+  const rb = SplitText.create('#c03 .rb', { type: 'chars' });
+  const tl = gsap.timeline({ defaults: { ease: 'none' } });
+  tl.from(sw.words, { opacity: .08, stagger: .08, duration: .2 })
+    .from('#c03 .gloss', { opacity: 0, y: 10, duration: .4 }, '>-.1')
+    .from('#c03 .chips span', { scale: .4, opacity: 0, stagger: .12, duration: .3, ease: 'back.out(2)' })
+    .from('#c03 .who.r', { opacity: 0, duration: .2 })
+    .from(rb.chars, { opacity: .08, stagger: .012, duration: .15 })
+    .from('#c03 .yes', { scale: 2.4, opacity: 0, rotate: -14, duration: .35, ease: 'expo.out' })
+    .to({}, { duration: .4 });
+  if (big && motion && !SHOT) {
+    ScrollTrigger.create({ animation: tl, trigger: '#c03', start: 'top top', end: '+=170%', pin: true, scrub: .6, onUpdate: s => listenP = s.progress });
+  } else if (motion && !SHOT) {
+    tl.pause(0);
+    ScrollTrigger.create({ trigger: '#c03 .tx', start: 'top 80%', once: true, onEnter: () => { tl.duration(4).play(); gsap.to({}, { duration: 4, onUpdate() { listenP = this.progress(); } }); } });
+  } else { tl.progress(1).pause(); listenP = 1; }
+  if (big && motion) {
+    const track = $('#track');
+    const dist = () => Math.max(0, track.scrollWidth - (innerWidth - track.getBoundingClientRect().left) + 40);
+    gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '#c09', start: 'top top', end: () => '+=' + (dist() + innerHeight * .4), pin: true, scrub: .7, invalidateOnRefresh: true } });
+  }
+  if (motion) $$('.lang').forEach(el => gsap.fromTo(el, { xPercent: el.dataset.dir > 0 ? -8 : 4 }, { xPercent: el.dataset.dir > 0 ? 4 : -14, ease: 'none', scrollTrigger: { trigger: '#c08', start: 'top bottom', end: 'bottom top', scrub: true } }));
+  return () => { sw.revert(); rb.revert(); };
+});
+
+function drawLCD(t) {
+  L.clearRect(0, 0, LW, LH); L.fillStyle = '#000';
+  SCREENS[screen](t);
+  const a = L.getImageData(0, 0, LW, LH).data;
+  LO.fillStyle = lcdBg; LO.fillRect(0, 0, lcdOut.width, lcdOut.height);
+  LO.fillStyle = 'rgba(30,40,0,.07)';
+  for (let y = 0; y < LH; y++) for (let x = 0; x < LW; x++) LO.fillRect(x * CW + .5, y * CW + .5, CW - 1, CW - 1);
+  LO.fillStyle = 'rgba(30,45,0,.22)';
+  for (let y = 0; y < LH; y++) for (let x = 0; x < LW; x++) if (a[(y * LW + x) * 4 + 3] > 96) LO.fillRect(x * CW + CW * .55, y * CW + CW * .55, CW - 1, CW - 1);
+  LO.fillStyle = '#121806';
+  for (let y = 0; y < LH; y++) for (let x = 0; x < LW; x++) if (a[(y * LW + x) * 4 + 3] > 96) LO.fillRect(x * CW + .5, y * CW + .5, CW - 1, CW - 1);
+  if (lcdFlick > 0) { LO.fillStyle = `rgba(255,255,220,${lcdFlick * .35})`; for (let y = 0; y < lcdOut.height; y += 6) LO.fillRect(0, y + (t * 200 % 6), lcdOut.width, 2); }
+}
+
+/* ---------------- night restyle of the island world ---------------- */
+const CH_ST = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1];
+const center = S.reduce((v, s) => v.add(s.pos), new THREE.Vector3()).multiplyScalar(1 / S.length);
+const CAMS = CH_ST.map((st, c) => {
+  if (st < 0) return [center.x, 0, center.z, 96, -.18, .16, .02];
+  const s = S[st], hero = c === 0, fut = c === 9;
+  return [s.pos.x + s.look[0], s.pos.y + s.look[1], s.pos.z + s.look[2], s.dist * (hero ? 1.8 : fut ? 1.45 : 1.42), (s.yaw ?? 0) + (hero ? -.22 : 0), hero ? .3 : fut ? .1 : .2, fut ? .24 : .02];
+});
+const glowTex = (() => {
+  const s = 256, cv = document.createElement('canvas'); cv.width = cv.height = s;
+  const c = cv.getContext('2d'), g = c.createRadialGradient(s / 2, s / 2, 0, s / 2, s / 2, s / 2);
+  g.addColorStop(0, 'rgba(255,186,110,.2)'); g.addColorStop(.6, 'rgba(255,170,90,.06)'); g.addColorStop(1, 'rgba(255,170,90,0)');
+  c.fillStyle = g; c.fillRect(0, 0, s, s); return new THREE.CanvasTexture(cv);
+})();
+S.forEach(s => {
+  const gl = new THREE.Mesh(new THREE.PlaneGeometry(30, 22), new THREE.MeshBasicMaterial({ map: glowTex, transparent: true, depthWrite: false, toneMapped: false, blending: THREE.AdditiveBlending }));
+  gl.rotation.x = -Math.PI / 2; gl.position.copy(s.pos).setY(.008); scene.add(gl);
+});
+
+const dotTex = (() => {
+  const cv = document.createElement('canvas'); cv.width = cv.height = 64; const c = cv.getContext('2d'), g = c.createRadialGradient(32, 32, 0, 32, 32, 32);
+  g.addColorStop(0, 'rgba(255,240,200,1)'); g.addColorStop(.3, 'rgba(255,210,120,.6)'); g.addColorStop(1, 'rgba(255,200,100,0)');
+  c.fillStyle = g; c.fillRect(0, 0, 64, 64); return new THREE.CanvasTexture(cv);
+})();
+const FF = 320, ffPos = new Float32Array(FF * 3);
+const ffSeed = Array.from({ length: FF }, (_, i) => { const st = S[i % S.length]; return [st.pos.x + (Math.random() - .5) * 18, .9 + Math.random() * 3.6, st.pos.z + (Math.random() - .5) * 13, Math.random() * 6.28]; });
+const ffGeo = new THREE.BufferGeometry(); ffGeo.setAttribute('position', new THREE.BufferAttribute(ffPos, 3));
+const fireflies = new THREE.Points(ffGeo, new THREE.PointsMaterial({ map: dotTex, color: 0xFFD27A, size: .22, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending }));
+fireflies.frustumCulled = false; scene.add(fireflies);
+
+const composer = new EffectComposer(renderer);
+composer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+composer.addPass(new RenderPass(scene, camera));
+if (innerWidth > 760) {
+  const gtao = new GTAOPass(scene, camera, innerWidth, innerHeight);
+  gtao.blendIntensity = .85;
+  gtao.updateGtaoMaterial({ radius: .55, distanceExponent: 1.4, thickness: 1, scale: 1.1, samples: 12 });
+  gtao.updatePdMaterial({ lumaPhi: 10, depthPhi: 2, normalPhi: 3, radius: 6, rings: 2, samples: 12 });
+  composer.addPass(gtao);
+}
+const tiltH = new ShaderPass(HorizontalTiltShiftShader), tiltV = new ShaderPass(VerticalTiltShiftShader);
+composer.addPass(tiltH); composer.addPass(tiltV);
+composer.addPass(new OutputPass());
+
+/* ---------------- interaction ---------------- */
+const pressKey = () => {};
+const tickers = $$('.tk').map(el => { el.innerHTML += el.innerHTML; return { el, x: 0, dir: +el.dataset.speed }; });
+let sound = true, actx;
+const DTMF = { 1: [697, 1209], 2: [697, 1336], 3: [697, 1477], 4: [770, 1209], 5: [770, 1336], 6: [770, 1477], 7: [852, 1209], 8: [852, 1336], 9: [852, 1477], '*': [941, 1209], 0: [941, 1336], '#': [941, 1477] };
+function tone(k) {
+  if (!sound || !DTMF[k]) return;
+  try {
+    actx ??= new AudioContext();
+    const t = actx.currentTime, g = actx.createGain();
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.06, t + .01); g.gain.setValueAtTime(.06, t + .12); g.gain.linearRampToValueAtTime(0, t + .15);
+    g.connect(actx.destination);
+    for (const f of DTMF[k]) { const o = actx.createOscillator(); o.frequency.value = f; o.connect(g); o.start(t); o.stop(t + .16); }
+  } catch {}
+}
+const snd = $('#snd');
+const setSound = v => { sound = v; snd.setAttribute('aria-pressed', v); snd.textContent = v ? 'Snd on' : 'Snd off'; };
+snd.addEventListener('click', () => setSound(!sound));
+const keyToCh = k => k === '*' || k === '0' ? 0 : k === '#' ? 10 : +k;
+addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (/^[0-9*#]$/.test(e.key)) { tone(e.key); scrollToSection(keyToCh(e.key)); }
+  else if (e.key === 'm' || e.key === 'M') setSound(!sound);
+});
+const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
+const cur = $('#cur');
+if (FINE) {
+  document.documentElement.classList.add('cur');
+  const qx = gsap.quickTo(cur, 'x', { duration: .18, ease: 'power3' }), qy = gsap.quickTo(cur, 'y', { duration: .18, ease: 'power3' });
+  addEventListener('pointermove', e => { qx(e.clientX); qy(e.clientY); cur.classList.toggle('press', !!e.target.closest('a,button,.key,.feat')); });
+}
+addEventListener('pointermove', e => { mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = e.clientY / innerHeight * 2 - 1; });
+(() => {
+  const c = document.createElement('canvas'); c.width = c.height = 160; const x = c.getContext('2d'), d = x.createImageData(160, 160);
+  for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+  x.putImageData(d, 0, 0); $('#grain').style.backgroundImage = `url(${c.toDataURL()})`;
+})();
+
+/* ---------------- frame loop ---------------- */
+const lcdw = $('#lcdw');
+let first = true, chapter = -1, intro = REDUCE || SHOT ? 1 : 0, lcdAcc = 1;
+const CS = [0, 0, 0, 20, 0, .2, .02];
+const camTarget = new THREE.Vector3(), off = new THREE.Vector3(), tmp = new THREE.Vector3();
+const railBtns = $$('#rail li');
+const timeEl = $('#time'), battI = $('#battI');
+function resize() {
+  renderer.setSize(innerWidth, innerHeight, false); composer.setSize(innerWidth, innerHeight);
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  const mob = innerWidth <= 760;
+  tiltH.uniforms.h.value = (mob ? 3 : 4.5) / innerWidth; tiltV.uniforms.v.value = (mob ? 3 : 4.5) / innerHeight;
+  tiltH.uniforms.r.value = tiltV.uniforms.r.value = mob ? .68 : .56;
+}
+addEventListener('resize', resize); resize();
+ScrollTrigger.addEventListener('refresh', measure);
+if (SHOT || REDUCE) S.forEach(s => s.builtAt = -10); else S[0].builtAt = -10;
+
+function frame(t, dt) {
+  const y = scrollY, vh = innerHeight;
+  scrollP = clamp(y / Math.max(1, document.documentElement.scrollHeight - vh));
+  timeEl.textContent = mm2(scrollP * 126);
+  battI.style.width = (4 + scrollP * 96) + '%';
+
+  const a = y + vh * .55;
+  let i = 0; while (i < tops.length - 1 && tops[i + 1] <= a) i++;
+  const win = vh * .65;
+  const j = Math.min(i + 1, tops.length - 1);
+  const f = j > i ? smooth(clamp((a - (tops[j] - win)) / win)) : 0;
+  const now = f > .5 ? j : i;
+  if (now !== chapter) {
+    chapter = now;
+    railBtns.forEach((li, k) => li.firstChild.classList.toggle('on', k === now));
+    if (SCR[now] !== screen) { screen = SCR[now]; lcdFlick = 1; lcdAcc = 1; }
+    lcdw.classList.toggle('off', now === 9);
+    const st = CH_ST[now];
+    if (st >= 0 && S[st].builtAt === null) S[st].builtAt = t;
+    if (st < 0) S.forEach((s, k) => { if (s.builtAt === null) s.builtAt = t + k * .12; });
+  }
+
+  const fit = Math.max(1, Math.pow(1.7 / camera.aspect, camera.aspect < .9 ? .45 : .75));
+  const k = first ? 1 : 1 - Math.exp(-dt * 2.4);
+  for (let q = 0; q < 7; q++) {
+    let v = lerp(CAMS[i][q], CAMS[j][q], f);
+    if (q === 3) v *= fit * (1 + 1.2 * (1 - intro));
+    CS[q] = lerp(CS[q], v, k);
+  }
+  first = false;
+  const km = 1 - Math.exp(-dt * 3);
+  mouse.sx = lerp(mouse.sx, mouse.x, km); mouse.sy = lerp(mouse.sy, mouse.y, km);
+  camTarget.set(CS[0], CS[1], CS[2]);
+  off.copy(OFFSET).applyAxisAngle(UP, CS[4] + Math.sin(t * .18) * .04 + mouse.sx * .1 - (1 - intro) * .7);
+  off.y += mouse.sy * -.05;
+  off.normalize().multiplyScalar(CS[3]);
+  camera.position.copy(camTarget).add(off);
+  camera.lookAt(camTarget);
+  if (innerWidth > 760) camera.setViewOffset(innerWidth, innerHeight, -innerWidth * CS[5], innerHeight * CS[6], innerWidth, innerHeight);
+  else camera.setViewOffset(innerWidth, innerHeight, 0, innerHeight * .22, innerWidth, innerHeight);
+  scene.fog.near = CS[3] * 1.7; scene.fog.far = CS[3] * 4;
+  sun.position.copy(camTarget).add(tmp.set(-13, 12, 7));
+  sun.target.position.copy(camTarget);
+
+  const cs = CH_ST[chapter];
+  S.forEach((st, q) => {
+    applyBuild(st, t);
+    if (st.builtAt !== null && t >= st.builtAt && (cs < 0 || Math.abs(q - cs) <= 1)) st.update(t, q === cs ? t - st.builtAt : 99);
+  });
+  packets.forEach(p => p.position.copy(roadCurve.getPoint((t * .011 + p.userData.o) % 1)).setY(.14));
+
+  camera.updateMatrixWorld();
+  for (const tg of tags) {
+    const st = S[tg.station];
+    const show = chapter > 0 && tg.station === cs && st.builtAt !== null && t - st.builtAt > 1.4 && intro > .9;
+    if (!show) { tg.el.style.opacity = 0; continue; }
+    tg.parent.localToWorld(tmp.copy(tg.local)).project(camera);
+    tg.el.style.opacity = tmp.z < 1 ? 1 : 0;
+    tg.el.style.transform = `translate(${(tmp.x * .5 + .5) * innerWidth}px,${(-tmp.y * .5 + .5) * innerHeight - 14}px) translate(-50%,-100%)`;
+  }
+
+  lcdAcc += dt; lcdFlick = Math.max(0, lcdFlick - dt * 3);
+  if (lcdAcc > .1) { lcdAcc = 0; drawLCD(t); }
+
+  const v = lenis ? lenis.velocity : 0;
+  for (const tk of tickers) {
+    tk.x -= (40 + Math.abs(v) * 12) * dt * tk.dir;
+    const w = tk.el.scrollWidth / 2; if (tk.x <= -w) tk.x += w; if (tk.x > 0) tk.x -= w;
+    tk.el.style.transform = `translate3d(${tk.x}px,0,0) skewX(${clamp(-v * .4, -12, 12)}deg)`;
+  }
+  ffSeed.forEach(([x, y, z, o], q) => ffPos.set([x + Math.sin(t * .3 + o) * .9, y + Math.sin(t * .7 + o * 2) * .35, z + Math.cos(t * .25 + o) * .9], q * 3));
+  ffGeo.attributes.position.needsUpdate = true;
+  fireflies.material.opacity = .65 + Math.sin(t * 2.3) * .2;
+  composer.render();
+}
+
+/* ---------------- start ---------------- */
+setupText();
+ScrollTrigger.refresh();
+measure();
+const clock = new THREE.Clock();
+gsap.ticker.add(() => { const dt = Math.min(clock.getDelta(), .05); frame(clock.elapsedTime, dt); });
+
+const qp = new URLSearchParams(location.search), hm = location.hash.match(/^#c(\d\d)$/);
+const deep = qp.has('ch') ? [+qp.get('ch'), +(qp.get('off') || 0)] : hm ? [+hm[1], 0] : null;
+if (deep) requestAnimationFrame(() => {
+  scrollToSection(Math.min(deep[0], 10), true);
+  if (deep[1]) { const yy = scrollY + deep[1]; lenis ? lenis.scrollTo(yy, { immediate: true, force: true }) : scrollTo(0, yy); }
+  first = true;
+});
+function bootDone() {
+  clearInterval(bootTimer);
+  const b = $('#boot');
+  if (REDUCE || SHOT || deep) { b.remove(); intro = 1; return; }
+  gsap.to(b, { clipPath: 'inset(0 0 100% 0)', duration: .9, ease: 'expo.inOut', onComplete: () => b.remove() });
+  const o = { v: 0 };
+  gsap.to(o, { v: 1, duration: 2.6, ease: 'expo.out', delay: .1, onUpdate() { intro = o.v; } });
+}
+setTimeout(bootDone, deep || SHOT ? 0 : Math.max(0, 900 - performance.now()));
+</script>
+</body>
+</html>

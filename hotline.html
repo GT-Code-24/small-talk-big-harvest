@@ -1,0 +1,1171 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Small Talk, Big Harvest</title>
+<meta name="description" content="An AI hotline that helps coffee farmers diagnose a sick plant: from any phone, in Swahili, without a data bundle.">
+<meta name="theme-color" content="#0E0F0A">
+<meta property="og:title" content="Small Talk, Big Harvest">
+<meta property="og:description" content="An AI hotline for coffee farmers. Any phone. Swahili voice. No data bundle.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'%3E%3Crect width='16' height='16' rx='3' fill='%230E0F0A'/%3E%3Crect x='5' y='2' width='6' height='12' fill='%23C6F432'/%3E%3Crect x='6' y='3' width='4' height='4' fill='%230E0F0A'/%3E%3Crect x='6' y='9' width='1' height='1' fill='%230E0F0A'/%3E%3Crect x='9' y='9' width='1' height='1' fill='%230E0F0A'/%3E%3Crect x='6' y='11' width='1' height='1' fill='%230E0F0A'/%3E%3Crect x='9' y='11' width='1' height='1' fill='%230E0F0A'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="vendor/fonts/fonts.css">
+<link rel="stylesheet" href="vendor/lenis/lenis.css">
+<style>
+:root{
+  --night:#0E0F0A; --night-2:#14160E; --line:#272B1D; --lime:#C6F432; --lime-dim:#8BA824; --olive:#4B5A1A;
+  --cherry:#E0363F; --paper:#ECEADF; --fog:#8E917C;
+  --disp:'Big Shoulders Display',Impact,'Arial Narrow',sans-serif;
+  --pix:'Silkscreen',ui-monospace,monospace;
+  --term:'VT323',ui-monospace,monospace;
+  --rail:clamp(64px,7vw,112px);
+}
+*{box-sizing:border-box}
+html{background:var(--night);color-scheme:dark}
+body{margin:0;background:var(--night);color:var(--paper);font:400 24px/1.12 var(--term);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--lime);color:var(--night)}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--lime);outline-offset:4px}
+@media (pointer:fine){html.cur,html.cur *{cursor:none!important}}
+
+#gl{position:fixed;inset:0;width:100vw;height:100vh;display:block;z-index:0}
+#shade{position:fixed;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(14,15,10,.92) 0%,rgba(14,15,10,.72) 34%,rgba(14,15,10,.12) 62%,rgba(14,15,10,0) 75%)}
+#crt{position:fixed;inset:0;z-index:50;pointer-events:none;background:repeating-linear-gradient(180deg,rgba(0,0,0,0) 0 2px,rgba(0,0,0,.26) 2px 3px);opacity:.42;mix-blend-mode:multiply}
+#grain{position:fixed;inset:-50%;z-index:51;pointer-events:none;opacity:.07;animation:grain 1s steps(6) infinite}
+@keyframes grain{0%{transform:translate(0,0)}20%{transform:translate(-3%,2%)}40%{transform:translate(2%,-4%)}60%{transform:translate(-4%,-1%)}80%{transform:translate(3%,3%)}100%{transform:translate(0,0)}}
+#vig{position:fixed;inset:0;z-index:49;pointer-events:none;background:radial-gradient(ellipse 120% 90% at 50% 50%,transparent 55%,rgba(0,0,0,.55) 100%)}
+#tags{position:fixed;inset:0;z-index:2;pointer-events:none}
+.gtag{position:absolute;left:0;top:0;font:400 10px/1.25 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--lime);background:rgba(14,15,10,.82);border-left:2px solid var(--lime);padding:5px 8px 5px 8px;white-space:nowrap;opacity:0;transition:opacity .35s;will-change:transform}
+.gtag small{display:block;color:var(--fog);font-size:9px}
+.gtag.red{color:var(--cherry);border-color:var(--cherry)}
+
+/* status bar */
+#bar{position:fixed;top:0;left:0;right:0;height:46px;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:0 22px;font:400 11px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--fog);border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(14,15,10,.94),rgba(14,15,10,.7));backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#bar .l,#bar .r{display:flex;align-items:center;gap:16px}
+.sig{display:inline-flex;align-items:flex-end;gap:2px;height:12px}
+.sig i{width:3px;background:var(--lime);display:block}
+.sig i:nth-child(1){height:4px}.sig i:nth-child(2){height:6px}.sig i:nth-child(3){height:8px}.sig i:nth-child(4){height:10px}.sig i:nth-child(5){height:12px;animation:sig 2.4s steps(1) infinite}
+@keyframes sig{0%,60%{opacity:1}61%,80%{opacity:.15}81%{opacity:1}}
+#brand{color:var(--paper);display:flex;align-items:center;gap:10px}
+#brand b{width:9px;height:9px;background:var(--lime);display:inline-block}
+#timer{color:var(--paper);display:flex;align-items:center;gap:7px;min-width:88px}
+#timer b{width:7px;height:7px;border-radius:50%;background:var(--cherry);animation:blink 1.2s steps(1) infinite}
+.batt{width:28px;height:12px;border:1px solid var(--fog);padding:1px;position:relative}
+.batt::after{content:"";position:absolute;right:-4px;top:3px;width:2px;height:4px;background:var(--fog)}
+.batt i{display:block;height:100%;width:4%;background:var(--lime)}
+#snd{color:var(--fog);padding:6px 0}
+#snd[aria-pressed="true"]{color:var(--lime)}
+#tourLink{color:var(--fog);text-decoration:none;border:1px solid var(--line);padding:7px 9px}
+#tourLink:hover{color:var(--lime);border-color:var(--lime)}
+@keyframes blink{50%{opacity:0}}
+
+/* chapter rail */
+#rail{position:fixed;left:20px;top:50%;transform:translateY(-50%);z-index:30;margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:7px}
+#rail button{display:flex;align-items:center;gap:9px;font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:#5E624F;padding:2px 0}
+#rail .d{display:inline-grid;place-items:center;width:20px;height:17px;border:1px solid #33372A;border-radius:4px;transition:all .25s}
+#rail .n{max-width:0;overflow:hidden;white-space:nowrap;transition:max-width .35s,color .25s}
+#rail button:hover .n,#rail .on .n{max-width:120px}
+#rail button:hover{color:var(--paper)}
+#rail .on{color:var(--lime)}
+#rail .on .d{background:var(--lime);color:var(--night);border-color:var(--lime)}
+
+/* sections */
+main{position:relative;z-index:3}
+.ch{position:relative;min-height:100vh;display:flex;align-items:center;padding:120px 6vw 120px calc(var(--rail) + 3.5vw)}
+.txt{position:relative;max-width:min(680px,52vw)}
+.bgnum{position:absolute;left:calc(var(--rail) - 1vw);top:50%;transform:translateY(-50%);font:900 clamp(260px,36vw,640px)/.78 var(--disp);color:transparent;-webkit-text-stroke:1px #22261A;z-index:-1;pointer-events:none;user-select:none;letter-spacing:-.02em}
+.kick{font:400 11px/1.3 var(--pix);letter-spacing:.08em;text-transform:uppercase;color:var(--lime);display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:0 0 26px}
+.kick .k{display:inline-grid;place-items:center;min-width:32px;height:26px;padding:0 6px;border:1px solid var(--lime);border-radius:7px;font-size:12px;box-shadow:0 3px 0 var(--olive)}
+.kick .sep{color:var(--olive)}
+h1,h2,h3{font-family:var(--disp);font-weight:900;text-transform:uppercase;margin:0;letter-spacing:-.005em}
+h1{font-size:clamp(72px,min(12.4vw,22vh),228px);line-height:.82;margin-bottom:30px}
+h2{font-size:clamp(54px,min(8.2vw,15vh),150px);line-height:.84;margin-bottom:28px}
+h2.s{font-size:clamp(48px,min(6.4vw,11vh),112px)}
+h1 em,h2 em{font-style:normal;color:var(--lime)}
+.o{color:transparent;-webkit-text-stroke:2px var(--paper)}
+em .o,.o.l{-webkit-text-stroke-color:var(--lime)}
+.lead{font:400 clamp(22px,1.75vw,30px)/1.1 var(--term);color:var(--paper);opacity:.9;max-width:34ch;margin:0 0 22px}
+.note{font:400 10px/1.5 var(--pix);color:var(--fog);letter-spacing:.05em;text-transform:uppercase;max-width:60ch}
+.note b{color:var(--paper);font-weight:400}
+.ex{display:inline-block;font:400 9px/1 var(--pix);letter-spacing:.08em;text-transform:uppercase;color:var(--night);background:var(--fog);padding:4px 5px;vertical-align:middle;margin-left:8px}
+kbd{font:400 11px/1 var(--pix);display:inline-grid;place-items:center;min-width:24px;height:22px;padding:0 5px;border:1px solid var(--fog);border-radius:5px;box-shadow:0 2px 0 #3A3E2F;color:var(--paper);margin:0 2px}
+
+/* hero */
+.hero .txt{max-width:min(900px,60vw)}
+.spec{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 34px}
+.spec span{font:400 11px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;padding:9px 11px 9px 24px;border:1px solid #3A4120;position:relative;color:var(--paper)}
+.spec span::before{content:"";position:absolute;left:10px;top:50%;width:6px;height:6px;margin-top:-3px;background:var(--lime)}
+.hint{font:400 11px/1.6 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--fog);display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hint .arr{color:var(--lime);animation:bob 1.4s ease-in-out infinite;display:inline-block}
+@keyframes bob{50%{transform:translateY(4px)}}
+
+/* ticker */
+.ticker{position:relative;z-index:3;background:var(--lime);color:var(--night);transform:rotate(-2.2deg) scale(1.04);overflow:hidden;padding:14px 0 10px;margin:40px 0;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.ticker.alt{transform:rotate(1.6deg) scale(1.04);background:var(--paper)}
+.tk{display:flex;width:max-content;will-change:transform}
+.tk span{font:900 clamp(40px,5.4vw,92px)/.9 var(--disp);text-transform:uppercase;white-space:nowrap;padding:0 26px;display:flex;align-items:center;gap:18px}
+.tk i{font:400 12px/1 var(--pix);font-style:normal;letter-spacing:.06em;border:2px solid var(--night);padding:6px 7px}
+.tk span::after{content:"";width:16px;height:16px;background:var(--night);margin-left:34px;transform:rotate(45deg)}
+
+/* flow */
+.flow{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:0 0 28px}
+.flow li{font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:#5E624F;border:1px solid #2E3224;padding:8px 10px}
+.flow li.on{color:var(--night);background:var(--lime);border-color:var(--lime)}
+.flow li.done{color:var(--lime-dim);border-color:#3A4120}
+
+/* problem */
+.stat{display:flex;align-items:flex-end;gap:22px;margin:8px 0 24px;flex-wrap:wrap}
+.stat .big{font:900 clamp(110px,13vw,220px)/.76 var(--disp);color:var(--cherry)}
+.stat .cap{font:400 11px/1.5 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--paper);max-width:24ch;padding-bottom:6px}
+.months{display:grid;grid-template-columns:repeat(12,1fr);gap:5px;max-width:460px;margin:0 0 20px}
+.months span{font:400 10px/1 var(--pix);text-align:center;padding:12px 0 9px;border:1px solid #2E3224;color:#5E624F}
+.months span.on{background:var(--cherry);border-color:var(--cherry);color:var(--night)}
+
+/* listen */
+.tx{border:1px solid var(--line);background:rgba(16,18,11,.88);padding:22px 24px;max-width:600px;margin-top:6px}
+.who{font:400 10px/1 var(--pix);letter-spacing:.08em;text-transform:uppercase;color:var(--fog);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.who::before{content:"";width:6px;height:6px;background:var(--lime)}
+.who.r::before{background:var(--paper)}
+.sw{display:block;font:400 clamp(26px,2.2vw,36px)/1.02 var(--term);color:var(--lime);margin:0 0 6px;quotes:"“" "”"}
+.gloss{font:400 20px/1.1 var(--term);color:var(--fog);margin-bottom:16px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:18px}
+.chips span{font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;background:var(--paper);color:var(--night);padding:8px 9px}
+.rb{display:block;font:400 clamp(22px,1.8vw,28px)/1.05 var(--term);color:var(--paper);margin:0 0 14px;quotes:"“" "”"}
+.yes{display:inline-flex;align-items:center;gap:14px;font:900 46px/.9 var(--disp);text-transform:uppercase;color:var(--night);background:var(--lime);padding:10px 16px 6px;transform:rotate(-3deg)}
+.yes small{font:400 10px/1 var(--pix);letter-spacing:.06em}
+
+/* know */
+.read{margin:4px 0 22px;max-width:520px;border-top:1px solid var(--line)}
+.read div{display:flex;align-items:baseline;gap:10px;padding:13px 0 11px;border-bottom:1px solid var(--line)}
+.read dt{font:400 11px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--fog);flex:none}
+.read .dots{flex:1;border-bottom:2px dotted #3A3E2F;transform:translateY(-4px)}
+.read dd{margin:0;font:900 40px/.8 var(--disp);text-transform:uppercase;color:var(--paper)}
+.read dd small{font-size:22px;color:var(--fog);margin-left:4px}
+.read .red dd{color:var(--cherry)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:520px;margin-bottom:18px}
+.two div{border:1px solid var(--line);padding:12px 14px;font:400 19px/1.05 var(--term);color:var(--fog)}
+.two b{display:block;font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--paper);margin-bottom:8px;font-weight:400}
+
+/* answer */
+.rank{max-width:540px;margin:0 0 22px}
+.rank .row{display:grid;grid-template-columns:150px 1fr 56px;align-items:center;gap:12px;padding:6px 0}
+.rank .nm{font:400 11px/1 var(--pix);letter-spacing:.05em;text-transform:uppercase;color:var(--paper)}
+.rank .cells{display:grid;grid-template-columns:repeat(25,1fr);gap:2px;height:18px}
+.rank .cells i{background:#22261A}
+.rank .cells i.on{background:var(--lime)}
+.rank .row:not(:first-child) .cells i.on{background:var(--fog)}
+.rank .pc{font:900 30px/.8 var(--disp);text-align:right}
+.ans{border:1px solid var(--lime);background:rgba(16,18,11,.9);padding:20px 22px;max-width:540px;position:relative}
+.ans h3{font-size:clamp(34px,3vw,48px);line-height:.9;margin:8px 0 10px}
+.ans p{margin:0;font:400 22px/1.1 var(--term);color:var(--paper);opacity:.85}
+.stamp{display:inline-block;font:400 11px/1 var(--pix);letter-spacing:.08em;text-transform:uppercase;padding:8px 10px;border:2px solid currentColor;transform:rotate(-4deg)}
+.stamp.lime{background:var(--lime);color:var(--night);border-color:var(--lime)}
+.stamp.red{color:var(--cherry)}
+.ans .stamp{position:absolute;right:18px;top:-16px}
+
+/* guardrails */
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:640px;margin:0 0 24px}
+.key{border-radius:22px;background:linear-gradient(180deg,#22261A,#171A10);border:1px solid #33382A;box-shadow:0 6px 0 #0A0B07,inset 0 1px 0 rgba(255,255,255,.06);padding:16px 16px 18px;min-height:170px;display:flex;flex-direction:column;transition:transform .15s,box-shadow .15s}
+.key:hover{transform:translateY(3px);box-shadow:0 3px 0 #0A0B07,inset 0 1px 0 rgba(255,255,255,.06)}
+.key .d{font:900 64px/.8 var(--disp);color:var(--paper)}
+.key.hot{background:linear-gradient(180deg,#D3F25A,#B4DC22);border-color:var(--lime);color:var(--night)}
+.key.hot .d,.key.hot b{color:var(--night)}
+.key.hot span{color:#2C3510}
+.key b{font:900 26px/.9 var(--disp);text-transform:uppercase;margin-top:auto;color:var(--paper)}
+.key span{font:400 18px/1 var(--term);color:var(--fog);margin-top:6px}
+
+/* impact */
+.alert{border:2px solid var(--cherry);padding:18px 20px 20px;max-width:520px;background:rgba(16,18,11,.9);margin-bottom:20px}
+.alert .top{display:flex;justify-content:space-between;align-items:center;font:400 10px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--cherry);margin-bottom:12px}
+.alert .top b{font-weight:400;animation:blink 1s steps(1) infinite}
+.alert h3{font-size:clamp(34px,3vw,46px);line-height:.92;margin-bottom:14px}
+
+/* vision */
+#c09{flex-direction:column;align-items:flex-start;justify-content:center}
+.langs{width:calc(100% + 6vw);margin-top:26px;overflow:hidden}
+.lang{display:flex;align-items:center;gap:22px;font:900 clamp(56px,min(8.6vw,13vh),160px)/.86 var(--disp);text-transform:uppercase;white-space:nowrap;color:transparent;-webkit-text-stroke:1.5px #555A47;will-change:transform}
+.lang.on{color:var(--lime);-webkit-text-stroke:0}
+.lang i{font:400 11px/1 var(--pix);font-style:normal;letter-spacing:.06em;-webkit-text-stroke:0;color:var(--night);background:var(--lime);padding:7px 8px}
+.crops{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.crops span{font:400 11px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;border:1px solid #3A4120;padding:9px 11px;color:var(--fog)}
+.crops span.on{color:var(--night);background:var(--lime);border-color:var(--lime)}
+
+/* future */
+#c10{display:block;padding-top:96px;padding-bottom:60px;overflow:hidden}
+#c10 .txt{max-width:min(760px,56vw)}
+.track{display:flex;gap:24px;width:max-content;margin-top:10px;padding-right:6vw}
+.feat{width:min(400px,80vw);min-height:min(400px,48vh);border-radius:30px;background:linear-gradient(180deg,#1E2117,#13150D);border:1px solid #33382A;box-shadow:0 10px 0 #090A06,0 40px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.06);padding:24px 26px 26px;display:flex;flex-direction:column;position:relative}
+.feat.hot{border-color:var(--lime);box-shadow:0 10px 0 #4B5A1A,0 40px 80px rgba(0,0,0,.45),0 0 60px rgba(198,244,50,.12)}
+.feat .hd{display:flex;align-items:flex-start;justify-content:space-between}
+.feat .num{font:900 120px/.74 var(--disp);color:var(--paper)}
+.feat .abc{font:400 11px/1 var(--pix);color:var(--fog);letter-spacing:.1em;margin-left:6px}
+.feat svg{width:76px;height:76px}
+.feat h3{font-size:clamp(40px,3.4vw,56px);line-height:.88;margin:22px 0 10px}
+.feat p{margin:0 0 18px;font:400 21px/1.08 var(--term);color:var(--paper);opacity:.82}
+.feat .stamp{margin-top:auto;align-self:flex-start}
+
+/* end */
+.end .txt{max-width:none}
+.end h2{font-size:clamp(96px,min(13vw,26vh),260px);line-height:.78;color:var(--lime)}
+.team{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 28px;max-width:560px;margin:8px 0 30px;border-top:1px solid var(--line)}
+.team span{font:900 28px/1 var(--disp);text-transform:uppercase;padding:13px 0 10px;border-bottom:1px solid var(--line)}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+.btn{font:400 12px/1 var(--pix);letter-spacing:.06em;text-transform:uppercase;padding:15px 18px;border:1px solid var(--lime);color:var(--lime);text-decoration:none;display:inline-flex;gap:10px;align-items:center;box-shadow:0 4px 0 var(--olive);transition:transform .12s,box-shadow .12s}
+.btn:hover{transform:translateY(2px);box-shadow:0 2px 0 var(--olive)}
+.btn.fill{background:var(--lime);color:var(--night)}
+
+/* boot */
+#boot{position:fixed;inset:0;z-index:60;background:var(--night);display:grid;place-items:center;font:400 12px/1.8 var(--pix);letter-spacing:.06em;text-transform:uppercase;color:var(--lime)}
+#boot .in{width:min(420px,84vw)}
+#boot .lg{font:900 64px/.85 var(--disp);color:var(--paper);margin-bottom:20px}
+#boot .lg span{color:var(--lime)}
+#boot .pb{display:grid;grid-template-columns:repeat(20,1fr);gap:3px;height:14px;margin:16px 0}
+#boot .pb i{background:#22261A}
+#boot .pb i.on{background:var(--lime)}
+#boot .log div span{color:var(--fog)}
+
+/* cursor */
+#cur{position:fixed;left:0;top:0;z-index:70;pointer-events:none;width:14px;height:14px;margin:-7px 0 0 -7px;background:var(--lime);mix-blend-mode:difference;display:none;align-items:center;justify-content:center;font:400 9px/1 var(--pix);letter-spacing:.06em;color:var(--night);transition:width .2s,height .2s,margin .2s,border-radius .2s}
+html.cur #cur{display:flex}
+#cur span{opacity:0;transition:opacity .15s}
+#cur.press{width:64px;height:28px;margin:-14px 0 0 -32px;mix-blend-mode:normal;border-radius:7px}
+#cur.press span{opacity:1}
+
+@media (max-width:760px){
+  :root{--rail:0px}
+  #rail,#brand,#tourLink{display:none}
+  #bar{padding:0 14px}
+  #shade{background:linear-gradient(180deg,rgba(14,15,10,0) 0%,rgba(14,15,10,.15) 40%,rgba(14,15,10,.75) 70%)}
+  .ch{align-items:flex-end;padding:54vh 16px 70px;min-height:100vh}
+  .txt,.hero .txt,#c10 .txt{max-width:100%;background:rgba(14,15,10,.84);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid var(--line);padding:22px 18px}
+  .bgnum{display:none}
+  h1{font-size:clamp(60px,17vw,96px)}
+  h2,h2.s{font-size:clamp(46px,13vw,76px)}
+  .keys{grid-template-columns:1fr}
+  .key{min-height:0;flex-direction:row;align-items:center;gap:14px}
+  .key b{margin:0}
+  .rank .row{grid-template-columns:96px 1fr 44px}
+  #c09{align-items:stretch}
+  .langs{width:100%;background:rgba(14,15,10,.84);padding:10px 0}
+  #c10{padding:54vh 16px 70px}
+  .track{flex-direction:column;width:auto;padding:0;margin-top:16px}
+  .feat{width:100%;min-height:0}
+  .team{grid-template-columns:1fr}
+  .ticker{margin:10px 0}
+}
+@media (prefers-reduced-motion:reduce){#grain,.hint .arr,.sig i,#timer b{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div id="shade"></div>
+<div id="tags" aria-hidden="true"></div>
+<div id="vig"></div>
+<div id="crt"></div>
+<div id="grain"></div>
+<div id="cur" aria-hidden="true"><span>PRESS</span></div>
+
+<div id="boot" aria-hidden="true">
+  <div class="in">
+    <div class="lg">Small talk,<br><span>big harvest.</span></div>
+    <div class="pb" id="bootBar"></div>
+    <div class="log" id="bootLog"></div>
+  </div>
+</div>
+
+<header id="bar">
+  <div class="l"><span class="sig" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><span>Hotline</span></div>
+  <div id="brand"><b></b>Small Talk, Big Harvest</div>
+  <div class="r">
+    <a id="tourLink" href="index.html">Island version</a>
+    <button id="snd" aria-pressed="true" title="Key tones (M)">Snd on</button>
+    <span id="timer" aria-label="Scroll progress"><b></b><span id="time">00:00</span></span>
+    <span class="batt" aria-hidden="true"><i id="battI"></i></span>
+  </div>
+</header>
+
+<nav aria-label="Chapters"><ol id="rail"></ol></nav>
+
+<main>
+<section class="ch hero" id="c00" data-key="*" data-label="Start">
+  <div class="txt">
+    <p class="kick"><span>Hack-Nation × World Bank</span><span class="sep">/</span><span>Small AI for Development · Agriculture</span></p>
+    <h1 class="split">Small talk,<br><em>big harvest.</em></h1>
+    <p class="lead dec">An AI hotline that helps coffee farmers diagnose a sick plant. From any phone, in Swahili, without a data bundle.</p>
+    <div class="spec"><span>Any phone</span><span>Swahili voice</span><span>No data bundle</span><span>A person when unsure</span></div>
+    <p class="hint"><span class="arr">▼</span> Scroll to dial <span class="sep">·</span> or press <kbd>1</kbd>–<kbd>9</kbd> <kbd>0</kbd></p>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true"><div class="tk" data-speed="1">
+  <span>Habari <i>hello</i></span><span>Kahawa <i>coffee</i></span><span>Shamba <i>plot</i></span><span>Majani <i>leaves</i></span><span>Mvua <i>rain</i></span><span>Simu <i>phone</i></span><span>Ndiyo <i>yes</i></span><span>Asante <i>thank you</i></span>
+</div></div>
+
+<section class="ch" id="c01" data-key="1" data-label="Noor">
+  <div class="bgnum" aria-hidden="true">01</div>
+  <div class="txt">
+    <p class="kick"><span class="k">1</span><span>Meet Noor</span></p>
+    <h2 class="split">Noor grows <em>coffee.</em></h2>
+    <p class="lead dec">Her phone makes calls and sends SMS. Nothing more. When her leaves change colour, she needs an answer while it still helps.</p>
+    <p class="note">Phone: <b>basic</b> · Data: <b>none</b> · Language: <b>Swahili</b> · Plot: <b>registered with her cooperative</b></p>
+  </div>
+</section>
+
+<section class="ch" id="c02" data-key="2" data-label="Problem">
+  <div class="bgnum" aria-hidden="true">02</div>
+  <div class="txt">
+    <p class="kick"><span class="k">2</span><span>The problem</span></p>
+    <h2 class="split">Disease spreads in <em>weeks.</em> Advice comes <span class="o">twice a year.</span></h2>
+    <div class="stat"><span class="big">2×</span><span class="cap">Extension officer visits per year, at best. Rust can cross a plot in weeks.</span></div>
+    <div class="months" aria-label="Officer visits by month"><span>J</span><span>F</span><span class="on">M</span><span>A</span><span>M</span><span>J</span><span>J</span><span>A</span><span class="on">S</span><span>O</span><span>N</span><span>D</span></div>
+    <p class="lead dec">Too few extension officers. Basic phones without data. Digital tools made for English readers.</p>
+    <p class="note">Source: challenge brief, Annex B</p>
+  </div>
+</section>
+
+<section class="ch" id="c03" data-key="3" data-label="Call">
+  <div class="bgnum" aria-hidden="true">03</div>
+  <div class="txt">
+    <p class="kick"><span class="k">3</span><span>Step 1 · Call</span></p>
+    <ol class="flow"><li class="on">01 Call</li><li>02 Listen</li><li>03 Context</li><li>04 Answer</li></ol>
+    <h2 class="split">Noor <em>calls.</em> From <span class="o">any phone.</span></h2>
+    <p class="lead dec">A free short number. No app to install, no data bundle, no reading. Just a normal phone call.</p>
+    <p class="note">The phone does nothing smart. All AI runs in the background system.</p>
+  </div>
+</section>
+
+<section class="ch" id="c04" data-key="4" data-label="Listen">
+  <div class="bgnum" aria-hidden="true">04</div>
+  <div class="txt">
+    <p class="kick"><span class="k">4</span><span>Step 2 · Listen</span></p>
+    <ol class="flow"><li class="done">01 Call</li><li class="on">02 Listen</li><li>03 Context</li><li>04 Answer</li></ol>
+    <h2 class="split s">The line <em>listens.</em> Then checks.</h2>
+    <p class="lead dec">Speech AI turns her Swahili into symptoms and reads them back. No advice until Noor confirms.</p>
+    <div class="tx">
+      <div class="who">Noor · Swahili</div>
+      <q class="sw" lang="sw">Majani yana unga wa rangi ya machungwa chini, na mengi yanaanguka.</q>
+      <div class="gloss">“The leaves have orange powder underneath, and many are falling.”</div>
+      <div class="chips"><span>orange powder</span><span>under the leaf</span><span>leaves falling</span></div>
+      <div class="who r">Hotline · read-back</div>
+      <q class="rb">You said: orange powder under the leaves, leaves falling. Is that right?</q>
+      <div><span class="yes" lang="sw">Ndiyo. <small>✓ confirmed</small></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="ch" id="c05" data-key="5" data-label="Context">
+  <div class="bgnum" aria-hidden="true">05</div>
+  <div class="txt">
+    <p class="kick"><span class="k">5</span><span>Step 3 · Context</span></p>
+    <ol class="flow"><li class="done">01 Call</li><li class="done">02 Listen</li><li class="on">03 Context</li><li>04 Answer</li></ol>
+    <h2 class="split">It knows <em>her field.</em></h2>
+    <p class="lead dec">Altitude, this week’s weather and what neighbours report. Same words, different field, different answer.</p>
+    <dl class="read">
+      <div><dt>Altitude</dt><span class="dots"></span><dd><span data-count="1700">1,700</span><small>m</small></dd></div>
+      <div><dt>Rain</dt><span class="dots"></span><dd><span data-count="5">5</span><small>of last 7 days</small></dd></div>
+      <div><dt>Temperature</dt><span class="dots"></span><dd>19–24<small>°C</small></dd></div>
+      <div class="red"><dt>Neighbours</dt><span class="dots"></span><dd><span data-count="3">3</span><small>report rust</small></dd></div>
+    </dl>
+    <div class="two"><div><b>Lower, warm, wet</b>Leaf rust likes it here.</div><div><b>High, cold, windy</b>Phoma blight likes it there.</div></div>
+    <p class="note">Plot context <span class="ex">example</span> · Caller ID → cooperative farmer registry → plot · weather from open data</p>
+  </div>
+</section>
+
+<section class="ch" id="c06" data-key="6" data-label="Answer">
+  <div class="bgnum" aria-hidden="true">06</div>
+  <div class="txt">
+    <p class="kick"><span class="k">6</span><span>Step 4 · Answer</span></p>
+    <ol class="flow"><li class="done">01 Call</li><li class="done">02 Listen</li><li class="done">03 Context</li><li class="on">04 Answer</li></ol>
+    <h2 class="split s">One safe step. <em>During the call.</em></h2>
+    <p class="lead dec">Symptoms plus context are ranked against a coffee disease base. The answer comes from an expert-reviewed list, plus an SMS summary.</p>
+    <div class="rank" aria-label="Likely cause, example scores">
+      <div class="row"><span class="nm">Leaf rust</span><span class="cells" data-v="82"></span><span class="pc">82%</span></div>
+      <div class="row"><span class="nm">Berry disease</span><span class="cells" data-v="10"></span><span class="pc">10%</span></div>
+      <div class="row"><span class="nm">Phoma blight</span><span class="cells" data-v="8"></span><span class="pc">8%</span></div>
+    </div>
+    <div class="ans">
+      <span class="stamp lime">SMS sent</span>
+      <div class="who">Answer · expert-reviewed <span class="ex">example</span></div>
+      <h3>Likely coffee leaf rust.</h3>
+      <p>Collect and bury fallen leaves. Your extension officer will call you about spraying.</p>
+    </div>
+  </div>
+</section>
+
+<section class="ch" id="c07" data-key="7" data-label="Guardrails">
+  <div class="bgnum" aria-hidden="true">07</div>
+  <div class="txt">
+    <p class="kick"><span class="k">7</span><span>Responsible AI</span></p>
+    <h2 class="split">When in doubt, <em>a person decides.</em></h2>
+    <div class="keys">
+      <div class="key"><span class="d">1</span><b>Checks first</b><span>Reads back before advising</span></div>
+      <div class="key"><span class="d">2</span><b>Approved answers</b><span>Only expert-reviewed text</span></div>
+      <div class="key hot"><span class="d">3</span><b>Not sure?</b><span>A person calls back</span></div>
+    </div>
+    <p class="lead dec">It never tells her to buy or spray. Nothing is generated freely.</p>
+    <p class="note">Consent at registration · data never sold · audio deleted after transcription · neighbour reports only as counts per area</p>
+  </div>
+</section>
+
+<section class="ch" id="c08" data-key="8" data-label="Impact">
+  <div class="bgnum" aria-hidden="true">08</div>
+  <div class="txt">
+    <p class="kick"><span class="k">8</span><span>Impact</span></p>
+    <h2 class="split">Every call is an <em>early warning.</em></h2>
+    <p class="lead dec">Confirmed reports cluster by area and week, so rare officer visits go where the outbreak is.</p>
+    <div class="alert">
+      <div class="top"><span>Alert · this week <span class="ex">example</span></span><b>● Live</b></div>
+      <h3>Leaf rust reported by <span data-count="4">4</span> farmers within 5 km.</h3>
+      <span class="stamp red">Visit this area first</span>
+    </div>
+    <p class="note">Noor hears: “Farmers near you report the same.” Counts per area, never names.</p>
+  </div>
+</section>
+
+<div class="ticker alt" aria-hidden="true"><div class="tk" data-speed="-1">
+  <span>Swahili <i>pilot</i></span><span>Amharic</span><span>Hausa</span><span>Hindi</span><span>Spanish</span><span>Bahasa</span><span>Coffee <i>pilot</i></span><span>Cocoa</span><span>Maize</span>
+</div></div>
+
+<section class="ch" id="c09" data-key="9" data-label="Vision">
+  <div class="bgnum" aria-hidden="true">09</div>
+  <div class="txt">
+    <p class="kick"><span class="k">9</span><span>Vision</span></p>
+    <h2 class="split s">One cooperative today. <em>Any crop, any language tomorrow.</em></h2>
+    <p class="lead dec">The engine, the read-back and the guardrails stay. Swap the speech pack for a new language, the knowledge base for a new crop.</p>
+  </div>
+  <div class="langs" aria-label="Languages">
+    <div class="lang on" data-dir="1">Swahili <i>Pilot</i></div>
+    <div class="lang" data-dir="-1">Amharic · Hausa · Hindi</div>
+    <div class="lang" data-dir="1">Spanish · Bahasa · …</div>
+  </div>
+  <div class="txt" style="margin-top:22px">
+    <div class="crops"><span class="on">Coffee · pilot</span><span>Cocoa</span><span>Maize</span></div>
+    <p class="note" style="margin-top:16px">Pilot metrics: time to first advice · calls resolved vs. routed to a person · officer visits that hit an active outbreak</p>
+  </div>
+</section>
+
+<section class="ch" id="c10" data-key="0" data-label="Next up">
+  <div class="txt">
+    <p class="kick"><span class="k">0</span><span>Future features</span></p>
+    <h2 class="split s">What comes <em>next.</em></h2>
+    <p class="lead dec">Four features on our roadmap: from a photo check we have already prototyped to an outbreak view for the whole cooperative.</p>
+  </div>
+  <div class="track" id="track">
+    <article class="feat hot">
+      <div class="hd"><div><span class="num">1</span><span class="abc">.,?</span></div><span class="px" data-px="leaf"></span></div>
+      <h3>Photo check</h3>
+      <p>Snap a leaf, get a second opinion. A 1.2 MB image model (MobileNetV3-Small) runs offline in a smartphone browser.</p>
+      <span class="stamp lime">Prototype built</span>
+    </article>
+    <article class="feat">
+      <div class="hd"><div><span class="num">2</span><span class="abc">ABC</span></div><span class="px" data-px="rain"></span></div>
+      <h3>Weather alerts</h3>
+      <p>An SMS before a wet week, when rust risk rises. Before the first spot shows.</p>
+      <span class="stamp">Next</span>
+    </article>
+    <article class="feat">
+      <div class="hd"><div><span class="num">3</span><span class="abc">DEF</span></div><span class="px" data-px="cal"></span></div>
+      <h3>Plot memory</h3>
+      <p>Reminders before the outbreak window her plot has had in past seasons.</p>
+      <span class="stamp">Next</span>
+    </article>
+    <article class="feat">
+      <div class="hd"><div><span class="num">4</span><span class="abc">GHI</span></div><span class="px" data-px="map"></span></div>
+      <h3>Officer dashboard</h3>
+      <p>The outbreak map for the whole cooperative, week by week.</p>
+      <span class="stamp">Later</span>
+    </article>
+  </div>
+  <p class="note" style="margin-top:26px;max-width:70ch">Photo check: our training data was limited, so it is a second opinion for farmers or officers who own a smartphone, never a replacement for the call.</p>
+</section>
+
+<section class="ch end" id="c11" data-key="#" data-label="Asante">
+  <div class="txt">
+    <p class="kick"><span class="k">#</span><span>Call ended · 02:06</span></p>
+    <h2 class="split" lang="sw">Asante.</h2>
+    <p class="lead dec">Small talk, big harvest. A phone call that gives Noor one safe step, and gives her cooperative an early warning.</p>
+    <div class="team"><span>Mahmoud Ahmed Alfourawi</span><span>Bhati Shashank</span><span>Jörg Heseler</span><span>Gabriel Tsonyev</span></div>
+    <div class="btns"><a class="btn fill" href="#c00" data-go="0">↑ Call again</a><a class="btn" href="tour.html">Open the 3D island tour →</a></div>
+    <p class="note">Hack-Nation × World Bank · Small AI for Development · Agriculture track<br>Numbers marked <span class="ex">example</span> are illustrative.</p>
+  </div>
+</section>
+</main>
+
+<script src="vendor/gsap/gsap.min.js"></script>
+<script src="vendor/gsap/ScrollTrigger.min.js"></script>
+<script src="vendor/gsap/SplitText.min.js"></script>
+<script src="vendor/lenis/lenis.min.js"></script>
+<script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+const { gsap, ScrollTrigger, SplitText, Lenis } = window;
+gsap.registerPlugin(ScrollTrigger, SplitText);
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = t => t * t * t * (t * (6 * t - 15) + 10);
+const REDUCE = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const FINE = matchMedia('(pointer: fine)').matches;
+const SHOT = new URLSearchParams(location.search).has('shot');
+
+/* ---------------- boot screen ---------------- */
+const bootBar = $('#bootBar'), bootLog = $('#bootLog');
+for (let i = 0; i < 20; i++) bootBar.appendChild(document.createElement('i'));
+const bootLines = [['Signal', '▂▃▅▇'], ['Swahili voice', 'ok'], ['Disease base', 'ok'], ['Officer on call', 'ok']];
+let bootStep = 0;
+const bootTimer = setInterval(() => {
+  bootStep++;
+  [...bootBar.children].forEach((c, i) => c.classList.toggle('on', i < bootStep * 2));
+  if (bootStep % 2 === 0 && bootLines[bootStep / 2 - 1]) {
+    const [a, b] = bootLines[bootStep / 2 - 1], d = document.createElement('div');
+    d.innerHTML = `&gt; ${a} <span>…</span> ${b}`; bootLog.appendChild(d);
+  }
+  if (bootStep >= 10) clearInterval(bootTimer);
+}, 70);
+
+await Promise.all([
+  document.fonts.load('900 60px "Big Shoulders Display"'),
+  document.fonts.load('8px Silkscreen'), document.fonts.load('16px Silkscreen'),
+  document.fonts.load('24px VT323'),
+]).catch(() => {});
+
+/* ---------------- renderer ---------------- */
+const canvas = $('#gl');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+renderer.setClearColor(0x0E0F0A, 1);
+renderer.toneMapping = THREE.NeutralToneMapping;
+renderer.toneMappingExposure = 1.05;
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x0E0F0A, 12, 44);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), .04).texture;
+scene.environmentIntensity = .5;
+const camera = new THREE.PerspectiveCamera(30, innerWidth / innerHeight, .1, 140);
+scene.add(camera);
+
+const aim = new THREE.Object3D(); aim.position.set(1.5, 0, -9); camera.add(aim);
+const keyL = new THREE.DirectionalLight(0xFFF4E2, 2.4); keyL.position.set(-5, 6, 3); keyL.target = aim; camera.add(keyL);
+const rimL = new THREE.DirectionalLight(0xC6F432, 4); rimL.position.set(7, 3, -18); rimL.target = aim; camera.add(rimL);
+const fillL = new THREE.DirectionalLight(0xE0363F, 1.1); fillL.position.set(-6, -5, -4); fillL.target = aim; camera.add(fillL);
+
+const rbox = (w, h, d, r, seg = 4) => new RoundedBoxGeometry(w, h, d, seg, r);
+function radialTex(inner, size = 256) {
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const x = c.getContext('2d'), g = x.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
+  g.addColorStop(0, inner); g.addColorStop(1, 'rgba(0,0,0,0)');
+  x.fillStyle = g; x.fillRect(0, 0, size, size);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+
+/* ---------------- the phone ---------------- */
+const rig = new THREE.Group(); camera.add(rig);
+const phone = new THREE.Group(); rig.add(phone);
+phone.add(new THREE.Mesh(rbox(1.5, 3.3, .42, .22, 6), new THREE.MeshPhysicalMaterial({ color: 0x191C13, roughness: .42, metalness: .25, clearcoat: .7, clearcoatRoughness: .3 })));
+const face = new THREE.Mesh(rbox(1.36, 3.12, .06, .17, 4), new THREE.MeshPhysicalMaterial({ color: 0x23271B, roughness: .55, metalness: .15, clearcoat: .3 }));
+face.position.z = .2; phone.add(face);
+const bez = new THREE.Mesh(rbox(1.18, .98, .04, .08, 3), new THREE.MeshStandardMaterial({ color: 0x050604, roughness: .2, metalness: .3 }));
+bez.position.set(0, .8, .235); phone.add(bez);
+for (let i = 0; i < 5; i++) {
+  const s = new THREE.Mesh(rbox(.2, .022, .02, .01, 2), new THREE.MeshStandardMaterial({ color: 0x050604, roughness: .6 }));
+  s.scale.x = 1 - Math.abs(i - 2) * .22; s.position.set(0, 1.47 - i * .035, .232); phone.add(s);
+}
+const led = new THREE.Mesh(new THREE.CircleGeometry(.03, 16), new THREE.MeshBasicMaterial({ color: 0xE0363F, toneMapped: false }));
+led.position.set(.48, 1.45, .232); phone.add(led);
+
+const LW = 96, LH = 64;
+const lcdC = document.createElement('canvas'); lcdC.width = LW; lcdC.height = LH;
+const L = lcdC.getContext('2d', { willReadFrequently: true });
+const lcdTex = new THREE.CanvasTexture(lcdC);
+lcdTex.magFilter = lcdTex.minFilter = THREE.NearestFilter; lcdTex.generateMipmaps = false;
+const lcdMat = new THREE.ShaderMaterial({
+  uniforms: { map: { value: lcdTex }, res: { value: new THREE.Vector2(LW, LH) }, uTime: { value: 0 }, uFlick: { value: 0 } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }',
+  fragmentShader: `
+    uniform sampler2D map; uniform vec2 res; uniform float uTime, uFlick; varying vec2 vUv;
+    void main(){
+      vec2 cell = vUv * res; vec2 id = floor(cell); vec2 f = fract(cell);
+      float on = texture2D(map, (id + .5) / res).a;
+      float sh = texture2D(map, (id + vec2(-.5, 1.5)) / res).a;
+      float grid = smoothstep(0., .14, f.x) * smoothstep(1., .86, f.x) * smoothstep(0., .14, f.y) * smoothstep(1., .86, f.y);
+      vec3 bg = vec3(.74, .93, .17);
+      float v = 1. - smoothstep(.25, .85, length((vUv - .5) * vec2(1.25, 1.)));
+      bg *= mix(.62, 1.04, v);
+      bg *= .965 + .035 * grid;
+      vec3 ink = vec3(.05, .07, .02);
+      vec3 col = mix(bg, bg * .82, sh * .7);
+      col = mix(col, ink, on * (.35 + .6 * grid));
+      col *= 1. - uFlick * (.45 + .45 * sin(vUv.y * 260. + uTime * 90.));
+      col += uFlick * .08;
+      gl_FragColor = vec4(col, 1.);
+    }`,
+});
+const lcd = new THREE.Mesh(new THREE.PlaneGeometry(1.02, .68), lcdMat);
+lcd.position.set(0, .8, .258); phone.add(lcd);
+const glass = new THREE.Mesh(new THREE.PlaneGeometry(1.06, .72), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: .06, roughness: .05, metalness: 0, clearcoat: 1 }));
+glass.position.set(0, .8, .262); phone.add(glass);
+const halo = new THREE.Mesh(new THREE.PlaneGeometry(5, 5), new THREE.MeshBasicMaterial({ map: radialTex('rgba(198,244,50,.32)'), transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+halo.position.set(0, .6, -.4); phone.add(halo);
+const spill = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 1.3), new THREE.MeshBasicMaterial({ map: radialTex('rgba(198,244,50,.5)'), transparent: true, opacity: .35, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+spill.position.set(0, .8, .245); phone.add(spill);
+const screenLight = new THREE.PointLight(0xC6F432, 2.2, 3.2, 1.6); screenLight.position.set(0, .7, .9); phone.add(screenLight);
+
+function label(main, sub, w = 128, h = 72, color = '#ECEADF', subColor = '#8E917C') {
+  const c = document.createElement('canvas'); c.width = w * 2; c.height = h * 2;
+  const x = c.getContext('2d'); x.scale(2, 2); x.textBaseline = 'middle';
+  x.fillStyle = color; x.font = '900 50px "Big Shoulders Display"'; x.fillText(main, 18, h / 2 + 3);
+  if (sub) { x.fillStyle = subColor; x.font = '400 14px Silkscreen'; x.fillText(sub, 60, h / 2 + 2); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; return t;
+}
+const keys = [];
+function addKey(ch, sub, x, y, w = .38, h = .22, accent) {
+  const g = new THREE.Group();
+  const m = new THREE.MeshStandardMaterial({ color: accent ?? 0x2B3021, roughness: .5, metalness: .12, emissive: 0xC6F432, emissiveIntensity: 0 });
+  const k = new THREE.Mesh(rbox(w, h, .09, .07, 3), m); g.add(k);
+  if (ch) {
+    const lab = new THREE.Mesh(new THREE.PlaneGeometry(w * .94, w * .94 * 72 / 128), new THREE.MeshBasicMaterial({ map: label(ch, sub), transparent: true, toneMapped: false }));
+    lab.position.z = .047; g.add(lab);
+  }
+  g.position.set(x, y, .245); phone.add(g);
+  const o = { ch, g, m, k, press: 0, base: .245 }; k.userData.key = o; keys.push(o); return o;
+}
+const soft = (x, col) => {
+  const o = addKey('', '', x, -.06, .36, .17);
+  const s = new THREE.Mesh(rbox(.18, .03, .02, .01, 2), new THREE.MeshBasicMaterial({ color: col, toneMapped: false }));
+  s.position.z = .048; o.g.add(s); return o;
+};
+const callKey = soft(-.44, 0xC6F432), endKey = soft(.44, 0xE0363F);
+const nav = addKey('', '', 0, -.06, .42, .24, 0x1F2318);
+const navRing = new THREE.Mesh(new THREE.TorusGeometry(.085, .012, 8, 32), new THREE.MeshStandardMaterial({ color: 0x5E624F, roughness: .4 }));
+navRing.position.z = .048; nav.g.add(navRing);
+const KL = [['1', ''], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'], ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ'], ['*', ''], ['0', '+'], ['#', '']];
+KL.forEach(([c, s], i) => addKey(c, s, -.43 + (i % 3) * .43, -.4 - Math.floor(i / 3) * .275));
+const byChar = Object.fromEntries(keys.filter(k => k.ch).map(k => [k.ch, k]));
+const brandTex = (() => {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 32; const x = c.getContext('2d');
+  x.font = '400 16px Silkscreen'; x.fillStyle = 'rgba(236,234,223,.55)'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('SMALL TALK', 128, 17);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+})();
+const brand = new THREE.Mesh(new THREE.PlaneGeometry(.64, .08), new THREE.MeshBasicMaterial({ map: brandTex, transparent: true, toneMapped: false }));
+brand.position.set(0, .2, .235); phone.add(brand);
+
+function pressKey(ch, strength = 1) { const k = byChar[ch] ?? (ch === 'call' ? callKey : ch === 'end' ? endKey : null); if (k) k.press = Math.max(k.press, strength); }
+
+/* ---------------- LCD screens ---------------- */
+function T(s, x, y, size = 8, align = 'left') { L.font = `${size}px Silkscreen`; L.textAlign = align; L.textBaseline = 'top'; L.fillText(s, x, y); }
+function W(s, size = 8) { L.font = `${size}px Silkscreen`; return L.measureText(s).width; }
+function fitT(s, y, max = 92) { T(s, 48, y, W(s, 16) <= max ? 16 : 8, 'center'); }
+let listenP = 0, scrollP = 0;
+function status(bars = 4) {
+  for (let i = 0; i < bars; i++) L.fillRect(1 + i * 3, 6 - (i + 1), 2, i + 1);
+  L.fillRect(83, 1, 11, 5); L.clearRect(84, 2, 9, 3); L.fillRect(85, 3, Math.round(7 * (.35 + .65 * scrollP)), 1); L.fillRect(94, 2, 1, 3);
+}
+function inverted(fn) { L.globalCompositeOperation = 'destination-out'; fn(); L.globalCompositeOperation = 'source-over'; }
+function title(s) { L.fillRect(0, 9, 96, 10); inverted(() => T(s, 48, 10, 8, 'center')); }
+function invRow(s, y) { L.fillRect(0, y - 1, 96, 10); inverted(() => T(s, 3, y)); }
+function softKeys(a, b) { if (a) T(a, 2, 55); if (b) T(b, 94, 55, 8, 'right'); }
+const mm2 = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+const SCREENS = {
+  boot() { status(); fitT('SMALL', 12); fitT('TALK,', 27); T('BIG HARVEST', 48, 43, 8, 'center'); softKeys('MENU', 'CALL'); },
+  noor() { status(2); title('NOOR'); T('CALLS', 3, 22); T('YES', 93, 22, 8, 'right'); T('SMS', 3, 32); T('YES', 93, 32, 8, 'right'); T('DATA', 3, 42); T('NONE', 93, 42, 8, 'right'); softKeys('BACK', 'OK'); },
+  problem(t) { status(1); title('INBOX'); T('NO NEW', 48, 22, 8, 'center'); T('MESSAGES', 48, 31, 8, 'center'); if ((t * 2 | 0) % 2) T('NEXT VISIT?', 48, 44, 8, 'center'); softKeys('BACK', ''); },
+  call(t) { status(); T('CALLING' + '...'.slice(0, (t * 3 | 0) % 4), 6, 11); fitT('HOTLINE', 23); T('FREE  ' + mm2(4 + t % 60), 48, 42, 8, 'center'); softKeys('', 'END'); },
+  listen(t) {
+    status();
+    if (listenP < .6) {
+      title('LISTENING');
+      for (let i = 0; i < 22; i++) { const h = 2 + Math.abs(Math.sin(t * 7 + i * .9) * Math.sin(t * 2.3 + i * .35)) * 14; L.fillRect(4 + i * 4, Math.round(37 - h / 2), 2, h | 0); }
+      T('SWAHILI', 48, 47, 8, 'center');
+    } else {
+      title('YOU SAID:'); T('ORANGE POWDER', 3, 22); T('UNDER LEAF', 3, 31); T('LEAVES FALL', 3, 40);
+      if (listenP > .86) { L.fillRect(0, 53, 46, 11); inverted(() => T('1 NDIYO', 2, 55)); T('2 HAPANA', 94, 55, 8, 'right'); }
+      else softKeys('1 NDIYO', '2 HAPANA');
+    }
+  },
+  know() { status(); title('MY PLOT'); T('ALT', 3, 22); T('1700M', 93, 22, 8, 'right'); T('RAIN', 3, 31); T('5/7 D', 93, 31, 8, 'right'); invRow('NEAR: 3 RUST', 42); softKeys('', 'EXAMPLE'); },
+  answer(t) {
+    status(); title('1 NEW SMS');
+    L.fillRect(40, 22, 16, 1); L.fillRect(40, 31, 16, 1); L.fillRect(40, 22, 1, 10); L.fillRect(55, 22, 1, 10);
+    for (let i = 0; i < 7; i++) { L.fillRect(41 + i, 23 + (i * .6 | 0), 1, 1); L.fillRect(54 - i, 23 + (i * .6 | 0), 1, 1); }
+    const msg = 'LIKELY LEAF RUST. COLLECT AND BURY FALLEN LEAVES. YOUR OFFICER WILL CALL.   ';
+    const w = W(msg), off = Math.round((t * 22) % w); T(msg + msg, 3 - off, 40);
+    softKeys('READ', 'BACK');
+  },
+  guard(t) { status(); fitT('NOT SURE?', 12); T('OFFICER WILL', 48, 30, 8, 'center'); T('CALL YOU BACK', 48, 39, 8, 'center'); if ((t * 2 | 0) % 2) L.fillRect(44, 51, 8, 2); },
+  impact(t) { status(); if ((t * 2.5 | 0) % 2) title('! ALERT !'); else T('! ALERT !', 48, 10, 8, 'center'); T('4 REPORTS', 48, 24, 8, 'center'); T('WITHIN 5 KM', 48, 33, 8, 'center'); T('THIS WEEK', 48, 42, 8, 'center'); softKeys('', 'EXAMPLE'); },
+  vision(t) { const G = ['HABARI', 'SELAM', 'SANNU', 'NAMASTE', 'HOLA', 'HALO'], N = ['SWAHILI', 'AMHARIC', 'HAUSA', 'HINDI', 'SPANISH', 'BAHASA']; const i = (t / .9 | 0) % 6; status(); fitT(G[i], 18); T(N[i], 48, 38, 8, 'center'); },
+  next(t) { status(); title('COMING SOON'); const it = ['PHOTO CHECK', 'WEATHER SMS', 'PLOT MEMORY', 'DASHBOARD'], s = (t / 1.2 | 0) % 4; it.forEach((x, i) => i === s ? invRow(x, 22 + i * 10) : T(x, 3, 22 + i * 10)); },
+  end() { status(0); fitT('ASANTE!', 12); T('CALL ENDED', 48, 33, 8, 'center'); T('02:06', 48, 43, 8, 'center'); },
+};
+const SCR = ['boot', 'noor', 'problem', 'call', 'listen', 'know', 'answer', 'guard', 'impact', 'vision', 'next', 'end'];
+let screen = 'boot', lcdAcc = 1;
+function drawLCD(t) {
+  L.clearRect(0, 0, LW, LH); L.fillStyle = '#000';
+  SCREENS[screen](t);
+  const d = L.getImageData(0, 0, LW, LH), a = d.data;
+  for (let i = 3; i < a.length; i += 4) { a[i] = a[i] > 96 ? 255 : 0; a[i - 1] = a[i - 2] = a[i - 3] = 0; }
+  L.putImageData(d, 0, 0); lcdTex.needsUpdate = true;
+}
+
+/* ---------------- terrain ---------------- */
+function H(x, z) {
+  const r = Math.hypot(x * .85 - 1.5, z + 1);
+  return 3.2 * Math.exp(-r * r / 70) + .95 * Math.sin(x * .19 + .8) * Math.cos(z * .16 - .4) + .5 * Math.sin(x * .45 + z * .3) + .26 * Math.cos(x * .92 - z * .64) + .1 * Math.sin(x * 1.8 + z * 1.4);
+}
+const TY = -1.6;
+const world = new THREE.Group(); world.position.y = TY; scene.add(world);
+const terrain = (() => {
+  const N = 160, S = 46, h = S / N, R = N + 1, v = new Float32Array(R * R);
+  for (let j = 0; j <= N; j++) for (let i = 0; i <= N; i++) v[j * R + i] = H(-S / 2 + i * h, -S / 2 + j * h);
+  let lo = Infinity, hi = -Infinity; for (const x of v) { lo = Math.min(lo, x); hi = Math.max(hi, x); }
+  const pos = [], col = [], STEP = .2, cLo = new THREE.Color(0x2A3313), cHi = new THREE.Color(0xC6F432), cc = new THREE.Color();
+  for (let lvl = Math.ceil(lo / STEP) * STEP, n = 0; lvl < hi; lvl += STEP, n++) {
+    const major = n % 5 === 0;
+    cc.copy(cLo).lerp(cHi, Math.pow((lvl - lo) / (hi - lo), 1.35) * (major ? 1 : .72));
+    for (let j = 0; j < N; j++) for (let i = 0; i < N; i++) {
+      const a = v[j * R + i] - lvl, b = v[j * R + i + 1] - lvl, c = v[(j + 1) * R + i + 1] - lvl, d = v[(j + 1) * R + i] - lvl;
+      if ((a > 0) === (b > 0) && (b > 0) === (c > 0) && (c > 0) === (d > 0)) continue;
+      const x0 = -S / 2 + i * h, z0 = -S / 2 + j * h, p = [];
+      if ((a > 0) !== (b > 0)) p.push(x0 + h * a / (a - b), z0);
+      if ((b > 0) !== (c > 0)) p.push(x0 + h, z0 + h * b / (b - c));
+      if ((c > 0) !== (d > 0)) p.push(x0 + h - h * c / (c - d), z0 + h);
+      if ((d > 0) !== (a > 0)) p.push(x0, z0 + h - h * d / (d - a));
+      for (let k = 0; k + 3 < p.length; k += 4) {
+        for (const [px, pz] of [[p[k], p[k + 1]], [p[k + 2], p[k + 3]]]) {
+          const fade = clamp((23 - Math.hypot(px, pz)) / 8);
+          pos.push(px, lvl, pz); col.push(cc.r * fade, cc.g * fade, cc.b * fade);
+        }
+      }
+    }
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  return new THREE.LineSegments(g, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: .6 }));
+})();
+world.add(terrain);
+const at = (x, z, lift = 0) => new THREE.Vector3(x, H(x, z) + lift, z);
+const rnd = (() => { let s = 7; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+
+function points(n, gen, color, size, opacity) {
+  const p = [];
+  for (let i = 0; i < n; i++) p.push(...gen(i));
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(p, 3));
+  return new THREE.Points(g, new THREE.PointsMaterial({ color, size, transparent: true, opacity, depthWrite: false }));
+}
+const plots = points(700, () => { for (;;) { const x = (rnd() - .5) * 36, z = (rnd() - .5) * 36, y = H(x, z); if (y > -.4 && y < 3 && Math.hypot(x, z) < 18) return [x, y + .04, z]; } }, 0xECEADF, .07, .35);
+world.add(plots);
+const NOOR = at(-4, 2), CLUSTER = at(5.5, -3);
+const NEIGH = [at(-2.3, 3.4), at(-5.9, .6), at(-2.9, -.2)];
+const rust = points(160, (i) => { const c = i < 90 ? CLUSTER : NEIGH[i % 3]; const r = (i < 90 ? 2.4 : .9) * Math.sqrt(rnd()), a = rnd() * 6.28; const x = c.x + Math.cos(a) * r, z = c.z + Math.sin(a) * r; return [x, H(x, z) + .06, z]; }, 0xE0363F, .13, 0);
+world.add(rust);
+
+function ring(r, color, tube = .025) {
+  const m = new THREE.Mesh(new THREE.RingGeometry(r - tube, r + tube, 64), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: 0, side: THREE.DoubleSide, depthWrite: false, toneMapped: false }));
+  m.rotation.x = -Math.PI / 2; return m;
+}
+const noorG = new THREE.Group(); noorG.position.copy(NOOR); world.add(noorG);
+const noorLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 2.4, 0)]), new THREE.LineBasicMaterial({ color: 0xC6F432, transparent: true, opacity: 0 }));
+noorG.add(noorLine);
+const noorHead = new THREE.Mesh(new THREE.BoxGeometry(.14, .14, .14), new THREE.MeshBasicMaterial({ color: 0xC6F432, transparent: true, opacity: 0, toneMapped: false }));
+noorHead.position.y = 2.4; noorG.add(noorHead);
+const noorRings = [0, 1, 2].map(() => { const r = ring(.5, 0xC6F432, .02); r.position.y = .03; noorG.add(r); return r; });
+const plotSq = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([[-.9, -.7], [.9, -.7], [.9, .7], [-.9, .7]].map(([x, z]) => new THREE.Vector3(x, 0, z))), new THREE.LineBasicMaterial({ color: 0xC6F432, transparent: true, opacity: 0 }));
+plotSq.position.y = .05; noorG.add(plotSq);
+const neighRings = NEIGH.map(p => { const g = new THREE.Group(); g.position.copy(p); world.add(g); return [0, 1].map(() => { const r = ring(.4, 0xE0363F, .022); r.position.y = .04; g.add(r); return r; }); }).flat();
+const clusterG = new THREE.Group(); clusterG.position.copy(CLUSTER); world.add(clusterG);
+const clusterRings = [0, 1, 2].map(() => { const r = ring(1, 0xE0363F, .03); r.position.y = .06; clusterG.add(r); return r; });
+const clusterFrame = new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints([[-3, -3], [3, -3], [3, 3], [-3, 3]].map(([x, z]) => new THREE.Vector3(x, 0, z))), new THREE.LineDashedMaterial({ color: 0xE0363F, dashSize: .3, gapSize: .2, transparent: true, opacity: 0 }));
+clusterFrame.computeLineDistances(); clusterFrame.position.y = .1; clusterG.add(clusterFrame);
+
+const RAIN = 520;
+const rainGeo = new THREE.BufferGeometry(); const rainPos = new Float32Array(RAIN * 6); rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+const rainSeed = Array.from({ length: RAIN }, () => [NOOR.x + (rnd() - .5) * 9, NOOR.z + (rnd() - .5) * 8, rnd()]);
+const rain = new THREE.LineSegments(rainGeo, new THREE.LineBasicMaterial({ color: 0x9FB7C9, transparent: true, opacity: 0 }));
+world.add(rain);
+
+const dust = points(500, () => [(rnd() - .5) * 40, rnd() * 9, (rnd() - .5) * 40], 0xC6F432, .05, .28);
+world.add(dust);
+
+/* voice wave (camera space) */
+const WN = 220, waves = [0, 1, 2].map(() => {
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(WN * 3), 3));
+  g.setAttribute('color', new THREE.BufferAttribute(new Float32Array(WN * 3), 3));
+  const l = new THREE.Line(g, new THREE.LineBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, toneMapped: false }));
+  l.frustumCulled = false; camera.add(l); return l;
+});
+
+/* geo tags */
+const tagBox = $('#tags');
+function gtag(text, sub, pos, key, red) {
+  const el = document.createElement('div'); el.className = 'gtag' + (red ? ' red' : ''); el.innerHTML = text + (sub ? `<small>${sub}</small>` : '');
+  tagBox.appendChild(el); return { el, pos: pos.clone().add(new THREE.Vector3(0, TY, 0)), key };
+}
+const TAGS = [
+  gtag("Noor's plot", '1,700 m · registry', NOOR.clone().add(new THREE.Vector3(.2, 2.75, 0)), 'noor'),
+  gtag('Neighbours', '3 report rust', NEIGH[1].clone().add(new THREE.Vector3(0, .6, 0)), 'neigh', true),
+  gtag('Rain', '5 of last 7 days', NOOR.clone().add(new THREE.Vector3(3.2, 4, -2)), 'rain'),
+  gtag('Cluster · 4 reports', 'within 5 km · this week', CLUSTER.clone().add(new THREE.Vector3(0, 1.2, 0)), 'cluster', true),
+];
+
+/* ---------------- keyframes per chapter ---------------- */
+const TAU = Math.PI * 2;
+// phone in camera space: nx, ny (fraction of half view), dist, rx, ry, rz, scale
+const PH = [
+  [.50, -.02, 9, -.1, -.55, .12, 1],
+  [.52, 0, 9, .05, -.25, -.04, .96],
+  [.56, .02, 9.4, -.18, .55, -.16, .92],
+  [.48, -.02, 8.6, 0, -.1, 0, 1.06],
+  [.56, 0, 9, .05, .24, .04, .98],
+  [.72, .4, 10, -.1, -.4, .1, .54],
+  [.52, 0, 9, 0, -.32, -.05, 1],
+  [.56, 0, 9.2, -.1, .42, .1, .96],
+  [.72, .4, 10, -.1, .5, -.1, .54],
+  [.68, .42, 10, 0, TAU - .4, 0, .5],
+  [.70, .44, 10, -.05, TAU - .3, .04, .46],
+  [.50, -.02, 9, -.1, TAU - .55, .12, 1],
+];
+// camera world position + look target
+const CAM = [
+  [[2, 6.5, 21], [0, 0, 0]],
+  [[-8, 5.5, 14], [-3, .6, 1]],
+  [[5, 9, 16], [2, 0, -2]],
+  [[-7.5, 4.4, 10.5], [-3, .9, 1.5]],
+  [[-6, 3.6, 8.6], [-2.6, 1, 1.2]],
+  [[-1.2, 6.2, 10.5], [-5.4, .4, 1.4]],
+  [[-9, 5, 11], [-3, .9, 1.5]],
+  [[0, 8, 15], [0, .6, 0]],
+  [[1, 12, 13], [1.6, -.6, -2.4]],
+  [[0, 19, 17], [0, -1, -3]],
+  [[-5, 9, 18], [0, .6, 0]],
+  [[2, 6.5, 21], [0, 0, 0]],
+];
+// terrain opacity, rust, noor, neighbours, rain, cluster, wave
+const ENV = [
+  [.55, 0, 0, 0, 0, 0, .18],
+  [.7, 0, 1, 0, 0, 0, .12],
+  [.65, .8, .5, 0, 0, 0, 0],
+  [.75, 0, 1, 0, 0, 0, .6],
+  [.7, 0, 1, 0, 0, 0, 1],
+  [1, .35, 1, 1, 1, 0, .2],
+  [.85, .2, 1, .4, 0, 0, .55],
+  [.7, 0, .4, 0, 0, 0, .25],
+  [1, .9, 0, 0, 0, 1, 0],
+  [.8, .25, 0, 0, 0, 0, .2],
+  [.6, 0, 0, 0, 0, 0, .1],
+  [.55, 0, 0, 0, 0, 0, .18],
+];
+const sections = $$('main .ch');
+const outer = s => s.parentElement.classList.contains('pin-spacer') ? s.parentElement : s;
+let tops = [];
+function measure() { tops = sections.map(s => outer(s).getBoundingClientRect().top + scrollY); }
+
+/* ---------------- scroll + text ---------------- */
+const lenis = REDUCE ? null : new Lenis({ lerp: .09, wheelMultiplier: .9 });
+if (lenis) { lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t => lenis.raf(t * 1000)); }
+gsap.ticker.lagSmoothing(0);
+function scrollToSection(i, immediate) {
+  const y = outer(sections[i]).getBoundingClientRect().top + scrollY;
+  if (lenis) { lenis.resize(); lenis.scrollTo(y, { immediate, force: true, duration: 1.6, easing: t => 1 - Math.pow(1 - t, 4) }); }
+  else scrollTo({ top: y, behavior: immediate ? 'instant' : 'smooth' });
+}
+
+const rail = $('#rail');
+sections.forEach((s, i) => {
+  const li = document.createElement('li');
+  li.innerHTML = `<button type="button" aria-label="${s.dataset.label}"><span class="d">${s.dataset.key}</span><span class="n">${s.dataset.label}</span></button>`;
+  li.firstChild.addEventListener('click', () => { tone(s.dataset.key); pressKey(s.dataset.key); scrollToSection(i); });
+  rail.appendChild(li);
+});
+$$('[data-go]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); scrollToSection(+a.dataset.go); }));
+
+const PX = {
+  leaf: ['............', '.......####.', '.....######.', '....#######.', '...####.###.', '...###.####.', '..###.#####.', '..##.######.', '..#.######..', '.#.#####....', '#...........', '............'],
+  rain: ['............', '....####....', '..########..', '.##########.', '############', '############', '.##########.', '............', '..#..#..#...', '.#..#..#....', '#..#..#.....', '............'],
+  cal: ['..#.....#...', '############', '#..........#', '############', '#..........#', '#.##.##.##.#', '#..........#', '#.##.##.##.#', '#..........#', '#.##.##....#', '#..........#', '############'],
+  map: ['............', '........###.', '.......#####', '.......##.##', '........###.', '.........#..', '.#..........', '.#...#......', '.#...#..#...', '.#.#.#..#.#.', '.#.#.#.##.#.', '############'],
+};
+$$('[data-px]').forEach(el => {
+  let r = '';
+  PX[el.dataset.px].forEach((row, y) => [...row].forEach((c, x) => { if (c === '#') r += `<rect x="${x}" y="${y}" width="1.02" height="1.02"/>`; }));
+  el.innerHTML = `<svg viewBox="0 0 12 12" fill="${el.closest('.hot') ? '#C6F432' : '#8E917C'}" shape-rendering="crispEdges" aria-hidden="true">${r}</svg>`;
+});
+$$('.cells').forEach(c => { for (let i = 0; i < 25; i++) c.appendChild(document.createElement('i')); });
+
+const GLY = '#%&@*+=<>/\\|01';
+function decode(el) {
+  const final = el.textContent, n = final.length;
+  el.textContent = '';
+  const a = document.createElement('span'), b = document.createElement('span'), c = document.createElement('span');
+  b.style.color = 'var(--lime)'; c.style.visibility = 'hidden'; el.append(a, b, c);
+  const o = { p: 0 };
+  gsap.to(o, { p: 1, duration: Math.min(1.5, .4 + n * .01), ease: 'power1.out', onUpdate() {
+    const k = Math.floor(o.p * n), e = Math.min(n, k + 10);
+    a.textContent = final.slice(0, k);
+    let s = ''; for (let i = k; i < e; i++) s += final[i] === ' ' ? ' ' : GLY[(Math.random() * GLY.length) | 0];
+    b.textContent = s; c.textContent = final.slice(e);
+  }, onComplete() { el.textContent = final; } });
+}
+function countUp(el) { const v = +el.dataset.count, o = { v: 0 }; gsap.to(o, { v, duration: 1.4, ease: 'expo.out', onUpdate() { el.textContent = Math.round(o.v).toLocaleString('en-US'); } }); }
+const fillCells = c => [...c.children].forEach((x, i) => i < Math.round(+c.dataset.v / 4) && x.classList.add('on'));
+
+function setupText() {
+  const heroH = $('.hero h1');
+  $$('.split').forEach(el => {
+    SplitText.create(el, { type: 'chars,words', autoSplit: true, onSplit(self) {
+      if (REDUCE) return;
+      const tw = { yPercent: 70, rotateX: -85, opacity: 0, transformOrigin: '50% 100%', stagger: .018, duration: 1, ease: 'expo.out' };
+      if (el === heroH) return gsap.from(self.chars, { ...tw, delay: SHOT ? 0 : .35, duration: SHOT ? .01 : 1.1 });
+      return gsap.from(self.chars, { ...tw, scrollTrigger: { trigger: el, start: 'top 86%', toggleActions: 'play none none reverse' } });
+    } });
+  });
+  if (REDUCE || SHOT) { $$('.cells').forEach(fillCells); return; }
+  $$('.dec').forEach(el => ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () => decode(el) }));
+  $$('[data-count]').forEach(el => ScrollTrigger.create({ trigger: el, start: 'top 92%', once: true, onEnter: () => countUp(el) }));
+  $$('.cells').forEach(c => {
+    const on = Math.round(+c.dataset.v / 4);
+    ScrollTrigger.create({ trigger: c, start: 'top 90%', once: true, onEnter: () => [...c.children].forEach((x, i) => i < on && gsap.delayedCall(i * .035, () => x.classList.add('on'))) });
+  });
+  $$('.keys .key, .stat, .months span, .alert, .ans, .read div, .two div, .crops span, .spec span').forEach(el => {
+    gsap.from(el, { y: 34, opacity: 0, duration: .8, ease: 'expo.out', scrollTrigger: { trigger: el, start: 'top 94%', toggleActions: 'play none none reverse' } });
+  });
+}
+
+const mm = gsap.matchMedia();
+mm.add({ big: '(min-width: 761px) and (min-height: 620px)', motion: '(prefers-reduced-motion: no-preference)' }, ctx => {
+  const { big, motion } = ctx.conditions;
+  const sw = SplitText.create('#c04 .sw', { type: 'chars' });
+  const rb = SplitText.create('#c04 .rb', { type: 'chars' });
+  const tl = gsap.timeline({ defaults: { ease: 'none' } });
+  tl.from(sw.chars, { opacity: .08, stagger: .02, duration: .2 })
+    .from('#c04 .gloss', { opacity: 0, y: 10, duration: .4 }, '>-.1')
+    .from('#c04 .chips span', { scale: .4, opacity: 0, stagger: .12, duration: .3, ease: 'back.out(2)' })
+    .from('#c04 .who.r', { opacity: 0, duration: .2 })
+    .from(rb.chars, { opacity: .08, stagger: .012, duration: .15 })
+    .from('#c04 .yes', { scale: 2.4, opacity: 0, rotate: -14, duration: .35, ease: 'expo.out' })
+    .to({}, { duration: .4 });
+  if (big && motion && !SHOT) {
+    ScrollTrigger.create({ animation: tl, trigger: '#c04', start: 'top top', end: '+=170%', pin: true, scrub: .6, onUpdate: s => listenP = s.progress });
+  } else if (motion && !SHOT) {
+    tl.pause(0);
+    ScrollTrigger.create({ trigger: '#c04 .tx', start: 'top 80%', once: true, onEnter: () => { tl.duration(4).play(); gsap.to({}, { duration: 4, onUpdate() { listenP = this.progress(); } }); } });
+  } else { tl.progress(1).pause(); listenP = 1; }
+  if (big && motion) {
+    const track = $('#track');
+    const dist = () => Math.max(0, track.scrollWidth - (innerWidth - track.getBoundingClientRect().left) + 40);
+    gsap.to(track, { x: () => -dist(), ease: 'none', scrollTrigger: { trigger: '#c10', start: 'top top', end: () => '+=' + (dist() + innerHeight * .4), pin: true, scrub: .7, invalidateOnRefresh: true } });
+  }
+  if (motion) $$('.lang').forEach(el => gsap.fromTo(el, { xPercent: el.dataset.dir > 0 ? -8 : 4 }, { xPercent: el.dataset.dir > 0 ? 4 : -14, ease: 'none', scrollTrigger: { trigger: '#c09', start: 'top bottom', end: 'bottom top', scrub: true } }));
+  return () => { sw.revert(); rb.revert(); };
+});
+
+const tickers = $$('.tk').map(el => { el.innerHTML += el.innerHTML; return { el, x: 0, dir: +el.dataset.speed }; });
+
+/* ---------------- interaction ---------------- */
+let sound = true, actx;
+const DTMF = { 1: [697, 1209], 2: [697, 1336], 3: [697, 1477], 4: [770, 1209], 5: [770, 1336], 6: [770, 1477], 7: [852, 1209], 8: [852, 1336], 9: [852, 1477], '*': [941, 1209], 0: [941, 1336], '#': [941, 1477] };
+function tone(k) {
+  if (!sound || !DTMF[k]) return;
+  try {
+    actx ??= new AudioContext();
+    const t = actx.currentTime, g = actx.createGain();
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(.06, t + .01); g.gain.setValueAtTime(.06, t + .12); g.gain.linearRampToValueAtTime(0, t + .15);
+    g.connect(actx.destination);
+    for (const f of DTMF[k]) { const o = actx.createOscillator(); o.frequency.value = f; o.connect(g); o.start(t); o.stop(t + .16); }
+  } catch {}
+}
+const snd = $('#snd');
+const setSound = v => { sound = v; snd.setAttribute('aria-pressed', v); snd.textContent = v ? 'Snd on' : 'Snd off'; };
+snd.addEventListener('click', () => setSound(!sound));
+const keyToCh = k => k === '*' ? 0 : k === '#' ? 11 : k === '0' ? 10 : +k;
+addEventListener('keydown', e => {
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (/^[0-9*#]$/.test(e.key)) { tone(e.key); pressKey(e.key); scrollToSection(keyToCh(e.key)); }
+  else if (e.key === 'm' || e.key === 'M') setSound(!sound);
+});
+
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(-9, -9);
+const mouse = { x: 0, y: 0, sx: 0, sy: 0 };
+let hoverKey = null, hoverDom = false;
+const cur = $('#cur');
+if (FINE) {
+  document.documentElement.classList.add('cur');
+  const qx = gsap.quickTo(cur, 'x', { duration: .18, ease: 'power3' }), qy = gsap.quickTo(cur, 'y', { duration: .18, ease: 'power3' });
+  addEventListener('pointermove', e => {
+    qx(e.clientX); qy(e.clientY);
+    hoverDom = !!e.target.closest('a,button,.key,.feat');
+    cur.classList.toggle('press', hoverDom || !!hoverKey);
+  });
+}
+addEventListener('pointermove', e => {
+  mouse.x = e.clientX / innerWidth * 2 - 1; mouse.y = e.clientY / innerHeight * 2 - 1;
+  ndc.set(mouse.x, -mouse.y);
+});
+addEventListener('click', e => {
+  if (!hoverKey || e.target.closest('a,button,input')) return;
+  const ch = hoverKey.ch || (hoverKey === callKey ? 'call' : hoverKey === endKey ? 'end' : '');
+  hoverKey.press = 1;
+  if (DTMF[ch]) { tone(ch); scrollToSection(keyToCh(ch)); }
+  else if (ch === 'call') { tone('1'); scrollToSection(3); }
+  else if (ch === 'end') { tone('#'); scrollToSection(11); }
+});
+
+(() => {
+  const c = document.createElement('canvas'); c.width = c.height = 160; const x = c.getContext('2d'), d = x.createImageData(160, 160);
+  for (let i = 0; i < d.data.length; i += 4) { const v = Math.random() * 255; d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255; }
+  x.putImageData(d, 0, 0); $('#grain').style.backgroundImage = `url(${c.toDataURL()})`;
+})();
+
+/* ---------------- frame loop ---------------- */
+const S = { nx: 0, ny: 0, d: 9, rx: 0, ry: 0, rz: 0, s: 1, cam: new THREE.Vector3(), look: new THREE.Vector3(), env: [...ENV[0]] };
+let first = true, chapter = -1, intro = REDUCE || SHOT ? 1 : 0;
+const tv = new THREE.Vector3(), tl3 = new THREE.Vector3(), tmp = new THREE.Vector3();
+const railBtns = $$('#rail li');
+const timeEl = $('#time'), battI = $('#battI');
+
+function resize() { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); }
+addEventListener('resize', resize); resize();
+ScrollTrigger.addEventListener('refresh', measure);
+
+function frame(t, dt) {
+  const y = scrollY, vh = innerHeight;
+  scrollP = clamp(y / Math.max(1, document.documentElement.scrollHeight - vh));
+  timeEl.textContent = mm2(scrollP * 126);
+  battI.style.width = (4 + scrollP * 96) + '%';
+
+  const a = y + vh * .55;
+  let i = 0; while (i < tops.length - 1 && tops[i + 1] <= a) i++;
+  const win = vh * .65;
+  const j = Math.min(i + 1, tops.length - 1);
+  const f = j > i ? smooth(clamp((a - (tops[j] - win)) / win)) : 0;
+  const now = f > .5 ? j : i;
+  if (now !== chapter) {
+    if (chapter >= 0) { pressKey(sections[now].dataset.key, .9); if (now === 3) pressKey('call'); if (now === 11) pressKey('end'); }
+    chapter = now;
+    railBtns.forEach((li, k) => li.firstChild.classList.toggle('on', k === now));
+    if (SCR[now] !== screen) { screen = SCR[now]; lcdMat.uniforms.uFlick.value = 1; lcdAcc = 1; }
+  }
+
+  const P = PH[i].map((v, k) => lerp(v, PH[j][k], f));
+  if (camera.aspect < .9) { P[0] = 0; P[1] = .46; P[6] *= .5; }
+  const k = first ? 1 : 1 - Math.exp(-dt * 4.2);
+  S.nx = lerp(S.nx, P[0], k); S.ny = lerp(S.ny, P[1], k); S.d = lerp(S.d, P[2], k);
+  S.rx = lerp(S.rx, P[3], k); S.ry = lerp(S.ry, P[4], k); S.rz = lerp(S.rz, P[5], k); S.s = lerp(S.s, P[6], k);
+  tv.fromArray(CAM[i][0]).lerp(tmp.fromArray(CAM[j][0]), f);
+  tl3.fromArray(CAM[i][1]).lerp(tmp.fromArray(CAM[j][1]), f);
+  const kc = first ? 1 : 1 - Math.exp(-dt * 2.6);
+  S.cam.lerp(tv, kc); S.look.lerp(tl3, kc);
+  const ke = first ? 1 : 1 - Math.exp(-dt * 3);
+  for (let e = 0; e < 7; e++) S.env[e] = lerp(S.env[e], lerp(ENV[i][e], ENV[j][e], f), ke);
+  first = false;
+
+  const km = 1 - Math.exp(-dt * 3);
+  mouse.sx = lerp(mouse.sx, mouse.x, km); mouse.sy = lerp(mouse.sy, mouse.y, km);
+  camera.position.copy(S.cam).add(tmp.set(mouse.sx * .8, -mouse.sy * .4, 0));
+  camera.lookAt(S.look.x, S.look.y + TY + 1.6, S.look.z);
+
+  const halfH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * S.d, halfW = halfH * camera.aspect;
+  const io = 1 - intro;
+  rig.position.set(S.nx * halfW + io * 1.5, S.ny * halfH + Math.sin(t * .9) * .05 - io * 7, -S.d);
+  rig.rotation.set(S.rx + mouse.sy * .08 + io * .9, S.ry + mouse.sx * .16 - io * 2.6, S.rz + Math.sin(t * .6) * .015 + io * .3);
+  rig.scale.setScalar(S.s);
+
+  for (const kk of keys) {
+    kk.press = Math.max(0, kk.press - dt * 2.2);
+    const p = kk === hoverKey ? Math.max(kk.press, .35) : kk.press;
+    kk.g.position.z = kk.base - p * .035; kk.m.emissiveIntensity = p * .9;
+  }
+  led.material.color.setHex((screen === 'call' || screen === 'listen') && (t * 2 | 0) % 2 ? 0xE0363F : 0x3A0E10);
+
+  lcdAcc += dt;
+  if (lcdAcc > .09) { lcdAcc = 0; drawLCD(t); }
+  lcdMat.uniforms.uTime.value = t;
+  lcdMat.uniforms.uFlick.value = Math.max(0, lcdMat.uniforms.uFlick.value - dt * 3.5);
+
+  const [eT, eR, eN, eNb, eRain, eC, eW] = S.env;
+  terrain.material.opacity = eT;
+  plots.material.opacity = .32 * eT;
+  rust.material.opacity = eR * .95;
+  noorLine.material.opacity = eN; noorHead.material.opacity = eN; plotSq.material.opacity = eN * .8;
+  noorHead.rotation.y = t; noorHead.position.y = 2.4 + Math.sin(t * 2) * .08;
+  noorRings.forEach((r, q) => { const p = (t * .5 + q / 3) % 1; r.scale.setScalar(.4 + p * 2.6); r.material.opacity = eN * (1 - p) * .9; });
+  neighRings.forEach((r, q) => { const p = (t * .6 + q * .5) % 1; r.scale.setScalar(.5 + p * 2); r.material.opacity = eNb * (1 - p); });
+  clusterRings.forEach((r, q) => { const p = (t * .35 + q / 3) % 1; r.scale.setScalar(.4 + p * 3.4); r.material.opacity = eC * (1 - p); });
+  clusterFrame.material.opacity = eC * .8;
+  rain.material.opacity = eRain * .5; rain.visible = eRain > .01;
+  if (rain.visible) { rainSeed.forEach(([x, z, o], q) => { const p = (t * .8 + o) % 1, yy = H(x, z) + 6 - p * 6; rainPos.set([x, yy, z, x - .03, yy + .32, z], q * 6); }); rainGeo.attributes.position.needsUpdate = true; }
+  dust.rotation.y = t * .01; dust.position.y = Math.sin(t * .3) * .2;
+
+  const wd = 8, ww = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * wd * camera.aspect;
+  const px = rig.position.x * wd / S.d, py = (rig.position.y - 1.1 * S.s) * wd / S.d;
+  waves.forEach((l, q) => {
+    const pa = l.geometry.attributes.position.array, ca = l.geometry.attributes.color.array;
+    for (let n = 0; n < WN; n++) {
+      const u = n / (WN - 1), x = lerp(-ww * 1.05, px - .2, u);
+      const env = Math.sin(Math.PI * u) * (.35 + .65 * u);
+      const amp = eW * .55 * env * (1 + .5 * Math.sin(t * 1.7 + q));
+      pa[n * 3] = x; pa[n * 3 + 1] = py + amp * Math.sin(u * (26 + q * 9) - t * (5 + q * 1.3)) * Math.sin(u * 7 + t * 1.1 + q); pa[n * 3 + 2] = -wd - q * .15;
+      const b = (.15 + .85 * u) * (q === 0 ? 1 : .45) * Math.min(1, eW * 2);
+      ca[n * 3] = .78 * b; ca[n * 3 + 1] = .96 * b; ca[n * 3 + 2] = .2 * b;
+    }
+    l.geometry.attributes.position.needsUpdate = true; l.geometry.attributes.color.needsUpdate = true;
+  });
+
+  camera.updateMatrixWorld();
+  if (FINE) {
+    ray.setFromCamera(ndc, camera);
+    const hit = ray.intersectObjects(keys.map(k => k.k), false)[0];
+    const nk = hit ? hit.object.userData.key : null;
+    if (nk !== hoverKey) { hoverKey = nk; cur.classList.toggle('press', hoverDom || !!nk); }
+  }
+  const vis = { noor: eN, neigh: eNb, rain: eRain, cluster: eC };
+  for (const g of TAGS) {
+    tmp.copy(g.pos).project(camera);
+    const show = vis[g.key] > .6 && tmp.z < 1 && Math.abs(tmp.x) < .95 && Math.abs(tmp.y) < .9;
+    g.el.style.opacity = show ? 1 : 0;
+    if (show) g.el.style.transform = `translate(${(tmp.x * .5 + .5) * innerWidth}px,${(-tmp.y * .5 + .5) * innerHeight}px) translate(-50%,-100%)`;
+  }
+
+  const v = lenis ? lenis.velocity : 0;
+  for (const tk of tickers) {
+    tk.x -= (40 + Math.abs(v) * 12) * dt * tk.dir;
+    const w = tk.el.scrollWidth / 2; if (tk.x <= -w) tk.x += w; if (tk.x > 0) tk.x -= w;
+    tk.el.style.transform = `translate3d(${tk.x}px,0,0) skewX(${clamp(-v * .4, -12, 12)}deg)`;
+  }
+
+  renderer.render(scene, camera);
+}
+
+/* ---------------- start ---------------- */
+setupText();
+ScrollTrigger.refresh();
+measure();
+const clock = new THREE.Clock();
+gsap.ticker.add(() => { const dt = Math.min(clock.getDelta(), .05); frame(clock.elapsedTime, dt); });
+
+const qp = new URLSearchParams(location.search), hm = location.hash.match(/^#c(\d\d)$/);
+const deep = qp.has('ch') ? [+qp.get('ch'), +(qp.get('off') || 0)] : hm ? [+hm[1], 0] : null;
+if (deep) requestAnimationFrame(() => {
+  scrollToSection(Math.min(deep[0], 11), true);
+  if (deep[1]) { const yy = scrollY + deep[1]; lenis ? lenis.scrollTo(yy, { immediate: true }) : scrollTo(0, yy); }
+  first = true;
+});
+function bootDone() {
+  clearInterval(bootTimer);
+  const b = $('#boot');
+  if (REDUCE || SHOT || deep) { b.remove(); intro = 1; return; }
+  gsap.to(b, { clipPath: 'inset(0 0 100% 0)', duration: .9, ease: 'expo.inOut', onComplete: () => b.remove() });
+  const o = { v: 0 };
+  gsap.to(o, { v: 1, duration: 2.2, ease: 'expo.out', delay: .15, onUpdate() { intro = o.v; } });
+  gsap.delayedCall(.9, () => pressKey('call'));
+}
+setTimeout(bootDone, deep || SHOT ? 0 : Math.max(0, 900 - performance.now()));
+</script>
+</body>
+</html>
